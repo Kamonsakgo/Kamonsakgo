@@ -53,24 +53,18 @@
 
 ## 📊 GitHub Stats
 
-<div align="center">
-  <img height="180em" src="https://github-readme-stats-nine-iota-51.vercel.app/api?username=Kamonsakgo&show_icons=true&theme=github_dark&count_private=true&include_all_commits=true&hide_border=true&cache_seconds=86400" />
-  <img height="180em" src="https://github-readme-stats-nine-iota-51.vercel.app/api/top-langs/?username=Kamonsakgo&layout=compact&theme=github_dark&hide_border=true&langs_count=8&cache_seconds=86400" />
-</div>
+<p align="center">
+  <a href="https://github.com/Kamonsakgo">
+    <img width="48%" src="https://github-readme-stats-nine-iota-51.vercel.app/api?username=Kamonsakgo&show_icons=true&theme=github_dark&count_private=true&include_all_commits=true&hide_border=true&rank_icon=github&show=prs_merged,reviews&custom_title=Kamonsakgo%27s%20GitHub%20Stats&title_color=58a6ff&icon_color=58a6ff&cache_seconds=86400" alt="GitHub Stats" />
+  </a>
+  <a href="https://github.com/Kamonsakgo">
+    <img width="48%" src="https://github-readme-stats-nine-iota-51.vercel.app/api/top-langs/?username=Kamonsakgo&layout=donut&theme=github_dark&hide_border=true&langs_count=8&hide=html,css,scss&title_color=58a6ff&custom_title=Most%20Used%20Languages&cache_seconds=86400" alt="Top Languages" />
+  </a>
+</p>
 
-<div align="center">
-  <img src="https://streak-stats.demolab.com?user=Kamonsakgo&theme=github-dark&hide_border=true&cache_seconds=86400" />
-</div>
-
----
-
-## 🐍 Contribution Snake
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/output/github-snake-dark.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/output/github-snake.svg" />
-  <img alt="GitHub contribution snake animation" src="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/output/github-snake-dark.svg" />
-</picture>
+<p align="center">
+  <img width="97%" src="https://streak-stats.demolab.com?user=Kamonsakgo&theme=github-dark&hide_border=true&date_format=j%20M%5B%20Y%5D&cache_seconds=86400" alt="Streak Stats" />
+</p>
 
 ---
 
