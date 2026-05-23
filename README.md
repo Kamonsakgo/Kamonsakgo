@@ -54,7 +54,7 @@
 ## 📊 GitHub Stats
 
 <div align="center">
-  <img height="180em" src="https://github-readme-stats-nine-iota-51.vercel.app/api?username=Kamonsakgo&show_icons=true&theme=github_dark&count_private=true&hide_border=true&cache_seconds=86400" />
+  <img height="180em" src="https://github-readme-stats-nine-iota-51.vercel.app/api?username=Kamonsakgo&show_icons=true&theme=github_dark&count_private=true&include_all_commits=true&hide_border=true&cache_seconds=86400" />
   <img height="180em" src="https://github-readme-stats-nine-iota-51.vercel.app/api/top-langs/?username=Kamonsakgo&layout=compact&theme=github_dark&hide_border=true&langs_count=8&cache_seconds=86400" />
 </div>
 
