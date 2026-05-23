@@ -54,12 +54,16 @@
 ## 📊 GitHub Stats
 
 <div align="center">
-  <img height="180em" src="https://github-readme-stats.vercel.app/api?username=Kamonsakgo&show_icons=true&theme=github_dark&include_all_commits=true&count_private=true&hide_border=true" />
-  <img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Kamonsakgo&layout=compact&theme=github_dark&hide_border=true&langs_count=8" />
+  <img height="180em" src="https://github-readme-stats.vercel.app/api?username=Kamonsakgo&show_icons=true&theme=github_dark&count_private=true&hide_border=true&cache_seconds=86400" />
+  <img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Kamonsakgo&layout=compact&theme=github_dark&hide_border=true&langs_count=8&cache_seconds=86400" />
 </div>
 
 <div align="center">
-  <img src="https://streak-stats.demolab.com?user=Kamonsakgo&theme=github-dark&hide_border=true" />
+  <img src="https://streak-stats.demolab.com?user=Kamonsakgo&theme=github-dark&hide_border=true&cache_seconds=86400" />
+</div>
+
+<div align="center">
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=Kamonsakgo&theme=github-compact&hide_border=true&area=true" />
 </div>
 
 <div align="center">
