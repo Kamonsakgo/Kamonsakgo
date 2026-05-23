@@ -37,21 +37,18 @@ jobs:
           plugin_languages_ignored: html, css, scss, jupyter notebook, makefile, dockerfile
           plugin_languages_details: percentage, lines, bytes-size
           plugin_languages_indepth: yes
+          plugin_languages_sections: most-used, recently-used
           plugin_languages_limit: 8
-          plugin_languages_analysis_timeout: 30
-
-          plugin_habits: yes
-          plugin_habits_facts: yes
-          plugin_habits_charts: yes
-          plugin_habits_from: 200
-          plugin_habits_days: 14
+          plugin_languages_analysis_timeout: 60
+          plugin_languages_analysis_timeout_repositories: 30
 
           plugin_followup: yes
 
           plugin_achievements: yes
           plugin_achievements_threshold: C
-          plugin_achievements_secrets: yes
           plugin_achievements_display: detailed
+          plugin_achievements_only: 'developer, polyglot, member, deployer, infographile, octonaut, stargazer'
 
           plugin_lines: yes
-          plugin_lines_history_limit: 1
+          plugin_lines_history_limit: 3
+          plugin_lines_repositories_limit: 4
