@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://komarev.com/ghpvc/?username=Kamonsakgo&label=Profile%20views&color=58a6ff&style=for-the-badge" alt="Profile views" />
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=Kamonsakgo.Kamonsakgo&left_color=24292f&right_color=58a6ff&left_text=Profile%20Views" alt="Profile views" />
 </p>
 
 ---
