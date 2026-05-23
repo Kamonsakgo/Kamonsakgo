@@ -68,6 +68,14 @@
 
 ---
 
+## 🔬 Detailed Metrics
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/metrics/github-metrics.svg" alt="Detailed Metrics" />
+</p>
+
+---
+
 ## 🤝 ติดต่อผม
 
 <p align="left">
