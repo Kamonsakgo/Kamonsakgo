@@ -26,23 +26,11 @@ jobs:
           committer_branch: metrics
           committer_message: "chore(metrics): refresh github-metrics.svg"
 
-          base: header, activity, community, repositories, metadata
-          base_indepth: yes
+          base: header, metadata
           repositories_affiliations: owner, collaborator, organization_member
 
           plugin_isocalendar: yes
           plugin_isocalendar_duration: full-year
-
-          plugin_languages: yes
-          plugin_languages_ignored: html, css, scss, jupyter notebook, makefile, dockerfile
-          plugin_languages_details: percentage, lines, bytes-size
-          plugin_languages_indepth: yes
-          plugin_languages_sections: most-used, recently-used
-          plugin_languages_limit: 8
-          plugin_languages_analysis_timeout: 60
-          plugin_languages_analysis_timeout_repositories: 30
-
-          plugin_followup: yes
 
           plugin_achievements: yes
           plugin_achievements_threshold: C
