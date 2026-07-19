@@ -62,7 +62,7 @@
 ## 🤝 ติดต่อผม
 
 <p align="center">
-  <a href="https://www.linkedin.com/in/%E0%B8%81%E0%B8%A1%E0%B8%A5%E0%B8%A8%E0%B8%B1%E0%B8%81%E0%B8%94%E0%B8%B4%E0%B9%8C-%E0%B8%9A%E0%B8%A3%E0%B8%A3%E0%B8%9E%E0%B8%95%E0%B8%B0%E0%B8%98%E0%B8%B4-63b95135a/" target="_blank">
+  <a href="https://www.linkedin.com/in/kamonsak-banpatathi" target="_blank">
     <img src="https://img.shields.io/badge/in-LinkedIn-00e5ff?style=for-the-badge&labelColor=0d1117" alt="LinkedIn" />
   </a>
   <a href="mailto:kamonsak.go@gmail.com">
