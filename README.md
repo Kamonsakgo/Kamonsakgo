@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=Kamonsakgo.Kamonsakgo&left_color=0d1117&right_color=21262d&left_text=Profile%20Views" alt="Profile views" />
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=Kamonsakgo.Kamonsakgo&left_color=%230d1117&right_color=%2321262d&left_text=Profile%20Views" alt="Profile views" />
 </p>
 
 <div align="center">
