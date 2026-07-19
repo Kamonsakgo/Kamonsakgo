@@ -3,9 +3,11 @@
 </div>
 
 <p align="center">
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=Kamonsakgo.Kamonsakgo&left_color=0d1117&right_color=00ff9f&left_text=Profile%20Views" alt="Profile views" />
-  <img src="https://img.shields.io/badge/STATUS-ONLINE-00ff9f?style=flat-square&labelColor=0d1117" alt="Status" />
-  <img src="https://img.shields.io/badge/LOCATION-Thailand%20🇹🇭-00e5ff?style=flat-square&labelColor=0d1117" alt="Location" />
+  <img src="assets/badges.svg" alt="online · bangkok · fueled" height="36" />
+</p>
+
+<p align="center">
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=Kamonsakgo.Kamonsakgo&left_color=0d1117&right_color=21262d&left_text=Profile%20Views" alt="Profile views" />
 </p>
 
 <div align="center">
@@ -26,8 +28,8 @@
 
 <img src="https://skillicons.dev/icons?i=go,py,php,laravel,django&theme=dark" alt="Languages" />
 
-<img src="https://img.shields.io/badge/Gin-00ff9f?style=for-the-badge&logo=go&logoColor=0d1117" alt="Gin" />
-<img src="https://img.shields.io/badge/Fiber-00e5ff?style=for-the-badge&logo=go&logoColor=0d1117" alt="Fiber" />
+<img src="https://img.shields.io/badge/Gin-161b22?style=for-the-badge&logo=go&logoColor=00ff9f" alt="Gin" />
+<img src="https://img.shields.io/badge/Fiber-161b22?style=for-the-badge&logo=go&logoColor=00e5ff" alt="Fiber" />
 
 **🗄️ Database · ☁️ DevOps · 🛠️ Tools**
 
@@ -63,7 +65,7 @@
 
 <p align="center">
   <a href="https://www.linkedin.com/in/kamonsak-banpatathi" target="_blank">
-    <img src="https://img.shields.io/badge/in-LinkedIn-00e5ff?style=for-the-badge&labelColor=0d1117" alt="LinkedIn" />
+    <img src="https://img.shields.io/badge/in-LinkedIn-161b22?style=for-the-badge&labelColor=0d1117" alt="LinkedIn" />
   </a>
   <a href="mailto:kamonsak.go@gmail.com">
     <img src="https://img.shields.io/badge/Gmail-0d1117?style=for-the-badge&logo=gmail&logoColor=00ff9f" alt="Gmail" />
