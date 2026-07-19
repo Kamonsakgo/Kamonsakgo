@@ -222,7 +222,7 @@ svg = f'''<svg width="900" height="460" viewBox="0 0 900 460" fill="none" xmlns=
 
   <g font-family="'Courier New', monospace" font-size="12">
     <text x="48" y="441" fill="#8b949e">&gt; aggregated nightly via GitHub Actions — no repo names, just the grind</text>
-    <rect x="540" y="430" width="8" height="13" fill="#00ff9f">
+    <rect x="572" y="430" width="8" height="13" fill="#00ff9f">
       <animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.5;0.5;1" dur="1s" repeatCount="indefinite"/>
     </rect>
   </g>
