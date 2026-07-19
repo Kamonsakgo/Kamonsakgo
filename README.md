@@ -39,10 +39,10 @@
   <img src="assets/divider.svg" alt="" width="100%" />
 </div>
 
-## 🐍 Contribution Snake
+## 🛰️ Microservices in Motion
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/output/github-snake-neon.svg" alt="Snake eating my contributions" width="100%" />
+  <img src="assets/pipeline.svg" alt="Animated microservices pipeline" width="100%" />
 </div>
 
 <div align="center">
@@ -62,10 +62,6 @@
 
 <p align="center">
   <img width="97%" src="https://streak-stats.demolab.com?user=Kamonsakgo&hide_border=true&date_format=j%20M%5B%20Y%5D&background=0d1117&ring=00ff9f&fire=00e5ff&currStreakNum=00ff9f&currStreakLabel=00e5ff&sideNums=c9d1d9&sideLabels=8b949e&dates=484f58&stroke=30363d&cache_seconds=86400" alt="Streak Stats" />
-</p>
-
-<p align="center">
-  <img width="97%" src="https://github-readme-activity-graph.vercel.app/graph?username=Kamonsakgo&bg_color=0d1117&color=00ff9f&line=bd00ff&point=00e5ff&area=true&area_color=1a1b27&hide_border=true&custom_title=Contribution%20Activity" alt="Activity Graph" />
 </p>
 
 <details>
