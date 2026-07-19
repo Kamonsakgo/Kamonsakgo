@@ -55,14 +55,6 @@
   <img src="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/stats/stats.svg" alt="Dev stats — updated daily" width="100%" />
 </div>
 
-<details>
-  <summary>📡 <b>Detailed Metrics</b> (คลิกเพื่อดู)</summary>
-  <br/>
-  <p align="center">
-    <img src="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/metrics/github-metrics.svg" alt="Detailed Metrics" />
-  </p>
-</details>
-
 <div align="center">
   <img src="assets/divider.svg" alt="" width="100%" />
 </div>
