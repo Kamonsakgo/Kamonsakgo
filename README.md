@@ -1,90 +1,96 @@
-<h1 align="center">สวัสดีครับ 👋 ผมชื่อกมลศักดิ์</h1>
+<div align="center">
+  <img src="assets/header.svg" alt="Kamonsak — Backend Developer" width="100%" />
+</div>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&duration=3000&pause=500&color=58A6FF&center=true&vCenter=true&width=500&lines=Backend+Developer;Go+%7C+Python+%7C+PHP;Building+APIs+%26+Microservices" alt="Typing SVG" />
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=Kamonsakgo.Kamonsakgo&left_color=0d1117&right_color=00ff9f&left_text=Profile%20Views" alt="Profile views" />
+  <img src="https://img.shields.io/badge/STATUS-ONLINE-00ff9f?style=flat-square&labelColor=0d1117" alt="Status" />
+  <img src="https://img.shields.io/badge/LOCATION-Thailand%20🇹🇭-00e5ff?style=flat-square&labelColor=0d1117" alt="Location" />
 </p>
 
-<p align="center">
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=Kamonsakgo.Kamonsakgo&left_color=24292f&right_color=58a6ff&left_text=Profile%20Views" alt="Profile views" />
-</p>
+<div align="center">
+  <img src="assets/terminal.svg" alt="Terminal intro" width="92%" />
+</div>
 
----
+<br/>
 
-## 👨‍💻 เกี่ยวกับผม
+<div align="center">
+  <img src="assets/divider.svg" alt="" width="100%" />
+</div>
 
-- 🔭 ทำงานเป็น **Backend Developer**
-- 🌱 หลงรักภาษา **Go** และ **Python**
-- ⚡ สนใจเรื่อง **Microservices, REST API, Cloud และ DevOps**
-- 📫 ติดต่อผมได้ที่ **kamonsak.go@gmail.com**
+## ⚡ Tech Stack
 
----
+<div align="center">
 
-## 🛠️ Tech Stack
+**⚙️ Languages & Frameworks**
 
-**ภาษาที่ใช้**
+<img src="https://skillicons.dev/icons?i=go,py,php,laravel,django&theme=dark" alt="Languages" />
 
-![Go](https://img.shields.io/badge/-Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
-![Python](https://img.shields.io/badge/-Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![PHP](https://img.shields.io/badge/-PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+<img src="https://img.shields.io/badge/Gin-00ff9f?style=for-the-badge&logo=go&logoColor=0d1117" alt="Gin" />
+<img src="https://img.shields.io/badge/Fiber-00e5ff?style=for-the-badge&logo=go&logoColor=0d1117" alt="Fiber" />
 
-**Frameworks**
+**🗄️ Database · ☁️ DevOps · 🛠️ Tools**
 
-![Gin](https://img.shields.io/badge/-Gin-008ECF?style=for-the-badge&logo=go&logoColor=white)
-![Fiber](https://img.shields.io/badge/-Fiber-00ACD7?style=for-the-badge&logo=go&logoColor=white)
-![Django](https://img.shields.io/badge/-Django-092E20?style=for-the-badge&logo=django&logoColor=white)
-![Laravel](https://img.shields.io/badge/-Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+<img src="https://skillicons.dev/icons?i=mysql,docker,aws,linux,git,postman,bash&theme=dark" alt="Tools" />
 
-**Database**
+</div>
 
-![MySQL](https://img.shields.io/badge/-MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+<div align="center">
+  <img src="assets/divider.svg" alt="" width="100%" />
+</div>
 
-**DevOps & Cloud**
+## 🐍 Contribution Snake
 
-![Docker](https://img.shields.io/badge/-Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![AWS](https://img.shields.io/badge/-AWS-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white)
-![Linux](https://img.shields.io/badge/-Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/output/github-snake-neon.svg" alt="Snake eating my contributions" width="100%" />
+</div>
 
-**Tools**
-
-![Git](https://img.shields.io/badge/-Git-F05032?style=for-the-badge&logo=git&logoColor=white)
-![Postman](https://img.shields.io/badge/-Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
-
----
+<div align="center">
+  <img src="assets/divider.svg" alt="" width="100%" />
+</div>
 
 ## 📊 GitHub Stats
 
 <p align="center">
   <a href="https://github.com/Kamonsakgo">
-    <img width="48%" src="https://github-readme-stats-nine-iota-51.vercel.app/api?username=Kamonsakgo&show_icons=true&theme=github_dark&count_private=true&include_all_commits=true&hide_border=true&rank_icon=github&show=prs_merged,reviews&custom_title=Kamonsakgo%27s%20GitHub%20Stats&title_color=58a6ff&icon_color=58a6ff&cache_seconds=86400" alt="GitHub Stats" />
+    <img width="48%" src="https://github-readme-stats-nine-iota-51.vercel.app/api?username=Kamonsakgo&show_icons=true&count_private=true&include_all_commits=true&hide_border=true&rank_icon=github&show=prs_merged,reviews&custom_title=Kamonsakgo%27s%20GitHub%20Stats&bg_color=0d1117&title_color=00ff9f&icon_color=bd00ff&text_color=8b949e&ring_color=00e5ff&cache_seconds=86400" alt="GitHub Stats" />
   </a>
   <a href="https://github.com/Kamonsakgo">
-    <img width="48%" src="https://github-readme-stats-nine-iota-51.vercel.app/api/top-langs/?username=Kamonsakgo&layout=donut&theme=github_dark&hide_border=true&langs_count=8&hide=html,css,scss&title_color=58a6ff&custom_title=Most%20Used%20Languages&cache_seconds=86400" alt="Top Languages" />
+    <img width="48%" src="https://github-readme-stats-nine-iota-51.vercel.app/api/top-langs/?username=Kamonsakgo&layout=donut&hide_border=true&langs_count=8&hide=html,css,scss&custom_title=Most%20Used%20Languages&bg_color=0d1117&title_color=00ff9f&text_color=8b949e&cache_seconds=86400" alt="Top Languages" />
   </a>
 </p>
 
 <p align="center">
-  <img width="97%" src="https://streak-stats.demolab.com?user=Kamonsakgo&theme=github-dark&hide_border=true&date_format=j%20M%5B%20Y%5D&cache_seconds=86400" alt="Streak Stats" />
+  <img width="97%" src="https://streak-stats.demolab.com?user=Kamonsakgo&hide_border=true&date_format=j%20M%5B%20Y%5D&background=0d1117&ring=00ff9f&fire=00e5ff&currStreakNum=00ff9f&currStreakLabel=00e5ff&sideNums=c9d1d9&sideLabels=8b949e&dates=484f58&stroke=30363d&cache_seconds=86400" alt="Streak Stats" />
 </p>
-
----
-
-## 🔬 Detailed Metrics
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/metrics/github-metrics.svg" alt="Detailed Metrics" />
+  <img width="97%" src="https://github-readme-activity-graph.vercel.app/graph?username=Kamonsakgo&bg_color=0d1117&color=00ff9f&line=bd00ff&point=00e5ff&area=true&area_color=1a1b27&hide_border=true&custom_title=Contribution%20Activity" alt="Activity Graph" />
 </p>
 
----
+<details>
+  <summary>📡 <b>Detailed Metrics</b> (คลิกเพื่อดู)</summary>
+  <br/>
+  <p align="center">
+    <img src="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/metrics/github-metrics.svg" alt="Detailed Metrics" />
+  </p>
+</details>
+
+<div align="center">
+  <img src="assets/divider.svg" alt="" width="100%" />
+</div>
 
 ## 🤝 ติดต่อผม
 
-<p align="left">
+<p align="center">
   <a href="https://www.linkedin.com/in/%E0%B8%81%E0%B8%A1%E0%B8%A5%E0%B8%A8%E0%B8%B1%E0%B8%81%E0%B8%94%E0%B8%B4%E0%B9%8C-%E0%B8%9A%E0%B8%A3%E0%B8%A3%E0%B8%9E%E0%B8%95%E0%B8%B0%E0%B8%98%E0%B8%B4-63b95135a/" target="_blank">
-    <img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
+    <img src="https://img.shields.io/badge/LinkedIn-0d1117?style=for-the-badge&logo=linkedin&logoColor=00e5ff" alt="LinkedIn" />
   </a>
   <a href="mailto:kamonsak.go@gmail.com">
-    <img src="https://img.shields.io/badge/-Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Gmail" />
+    <img src="https://img.shields.io/badge/Gmail-0d1117?style=for-the-badge&logo=gmail&logoColor=00ff9f" alt="Gmail" />
   </a>
 </p>
 
-<p align="center"><i>"Code. Build. Ship. Repeat."</i></p>
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=16&duration=4000&pause=1000&color=00FF9F&center=true&vCenter=true&width=500&lines=%22Code.+Build.+Ship.+Repeat.%22;%3C%2F%3E+with+%E2%9D%A4+from+Thailand" alt="Quote" />
+</p>

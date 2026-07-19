@@ -1,0 +1,24 @@
+<svg width="900" height="24" viewBox="0 0 900 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="dGrad" x1="0" y1="0" x2="900" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00ff9f" stop-opacity="0"/>
+      <stop offset="0.2" stop-color="#00ff9f"/>
+      <stop offset="0.5" stop-color="#00e5ff"/>
+      <stop offset="0.8" stop-color="#bd00ff"/>
+      <stop offset="1" stop-color="#bd00ff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="dGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <line x1="20" y1="12" x2="880" y2="12" stroke="url(#dGrad)" stroke-width="2"/>
+  <rect x="12" y="8" width="8" height="8" fill="#00ff9f" transform="rotate(45 16 12)" opacity="0.9"/>
+  <rect x="880" y="8" width="8" height="8" fill="#bd00ff" transform="rotate(45 884 12)" opacity="0.9"/>
+  <circle r="4" cy="12" fill="#00e5ff" filter="url(#dGlow)">
+    <animate attributeName="cx" values="20;880;20" dur="7s" repeatCount="indefinite"/>
+  </circle>
+</svg>
