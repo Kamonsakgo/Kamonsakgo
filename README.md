@@ -3,10 +3,6 @@
 </div>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/main/assets/badges.svg?v=2" alt="online · bangkok" height="36" />
-</p>
-
-<p align="center">
   <img src="https://visitor-badge.laobi.icu/badge?page_id=Kamonsakgo.Kamonsakgo&left_color=%230d1117&right_color=%2321262d&left_text=Profile%20Views" alt="Profile views" />
 </p>
 
