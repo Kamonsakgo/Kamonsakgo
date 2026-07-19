@@ -49,20 +49,11 @@
   <img src="assets/divider.svg" alt="" width="100%" />
 </div>
 
-## 📊 GitHub Stats
+## 📊 Dev Stats <sub><sup>— real data (public + private), refreshed nightly</sup></sub>
 
-<p align="center">
-  <a href="https://github.com/Kamonsakgo">
-    <img width="48%" src="https://github-readme-stats-nine-iota-51.vercel.app/api?username=Kamonsakgo&show_icons=true&count_private=true&hide_border=true&rank_icon=github&custom_title=Kamonsakgo%27s%20GitHub%20Stats&bg_color=0d1117&title_color=00ff9f&icon_color=bd00ff&text_color=8b949e&ring_color=00e5ff&cache_seconds=86400" alt="GitHub Stats" />
-  </a>
-  <a href="https://github.com/Kamonsakgo">
-    <img width="48%" src="https://github-readme-stats-nine-iota-51.vercel.app/api/top-langs/?username=Kamonsakgo&layout=donut&hide_border=true&langs_count=8&hide=html,css,scss&custom_title=Most%20Used%20Languages&bg_color=0d1117&title_color=00ff9f&text_color=8b949e&cache_seconds=86400" alt="Top Languages" />
-  </a>
-</p>
-
-<p align="center">
-  <img width="97%" src="https://streak-stats.demolab.com?user=Kamonsakgo&hide_border=true&date_format=j%20M%5B%20Y%5D&background=0d1117&ring=00ff9f&fire=00e5ff&currStreakNum=00ff9f&currStreakLabel=00e5ff&sideNums=c9d1d9&sideLabels=8b949e&dates=484f58&stroke=30363d&cache_seconds=86400" alt="Streak Stats" />
-</p>
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/stats/stats.svg" alt="Dev stats — updated daily" width="100%" />
+</div>
 
 <details>
   <summary>📡 <b>Detailed Metrics</b> (คลิกเพื่อดู)</summary>
