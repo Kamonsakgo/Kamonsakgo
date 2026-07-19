@@ -3,7 +3,7 @@
 </div>
 
 <p align="center">
-  <img src="assets/badges.svg" alt="online · bangkok · fueled" height="36" />
+  <img src="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/main/assets/badges.svg?v=2" alt="online · bangkok" height="36" />
 </p>
 
 <p align="center">
