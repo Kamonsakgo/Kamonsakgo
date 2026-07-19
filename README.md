@@ -53,7 +53,7 @@
 
 <p align="center">
   <a href="https://github.com/Kamonsakgo">
-    <img width="48%" src="https://github-readme-stats-nine-iota-51.vercel.app/api?username=Kamonsakgo&show_icons=true&count_private=true&include_all_commits=true&hide_border=true&rank_icon=github&show=prs_merged,reviews&custom_title=Kamonsakgo%27s%20GitHub%20Stats&bg_color=0d1117&title_color=00ff9f&icon_color=bd00ff&text_color=8b949e&ring_color=00e5ff&cache_seconds=86400" alt="GitHub Stats" />
+    <img width="48%" src="https://github-readme-stats-nine-iota-51.vercel.app/api?username=Kamonsakgo&show_icons=true&count_private=true&hide_border=true&rank_icon=github&custom_title=Kamonsakgo%27s%20GitHub%20Stats&bg_color=0d1117&title_color=00ff9f&icon_color=bd00ff&text_color=8b949e&ring_color=00e5ff&cache_seconds=86400" alt="GitHub Stats" />
   </a>
   <a href="https://github.com/Kamonsakgo">
     <img width="48%" src="https://github-readme-stats-nine-iota-51.vercel.app/api/top-langs/?username=Kamonsakgo&layout=donut&hide_border=true&langs_count=8&hide=html,css,scss&custom_title=Most%20Used%20Languages&bg_color=0d1117&title_color=00ff9f&text_color=8b949e&cache_seconds=86400" alt="Top Languages" />
@@ -84,7 +84,7 @@
 
 <p align="center">
   <a href="https://www.linkedin.com/in/%E0%B8%81%E0%B8%A1%E0%B8%A5%E0%B8%A8%E0%B8%B1%E0%B8%81%E0%B8%94%E0%B8%B4%E0%B9%8C-%E0%B8%9A%E0%B8%A3%E0%B8%A3%E0%B8%9E%E0%B8%95%E0%B8%B0%E0%B8%98%E0%B8%B4-63b95135a/" target="_blank">
-    <img src="https://img.shields.io/badge/LinkedIn-0d1117?style=for-the-badge&logo=linkedin&logoColor=00e5ff" alt="LinkedIn" />
+    <img src="https://img.shields.io/badge/in-LinkedIn-00e5ff?style=for-the-badge&labelColor=0d1117" alt="LinkedIn" />
   </a>
   <a href="mailto:kamonsak.go@gmail.com">
     <img src="https://img.shields.io/badge/Gmail-0d1117?style=for-the-badge&logo=gmail&logoColor=00ff9f" alt="Gmail" />
