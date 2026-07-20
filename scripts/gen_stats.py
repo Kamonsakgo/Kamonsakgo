@@ -11,6 +11,9 @@ import sys
 import urllib.parse
 import urllib.request
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import stats_data
+
 TOKEN = os.environ.get("METRICS_TOKEN") or os.environ.get("GITHUB_TOKEN")
 if not TOKEN:
     sys.exit("METRICS_TOKEN or GITHUB_TOKEN required")
@@ -71,6 +74,8 @@ days = set()
 total = 0
 touched = 0
 lang_bytes = {}
+daily = {}
+repo_rows = []
 
 for r in repos:
     commits = all_pages(f"/repos/{r['full_name']}/commits", {
@@ -84,11 +89,23 @@ for r in repos:
         date = c["commit"]["author"]["date"]
         total += 1
         days.add(date[:10])
+        daily[date[:10]] = daily.get(date[:10], 0) + 1
         if date[:7] in months:
             months[date[:7]] += 1
+    repo_rows.append({
+        "name": r["name"],
+        "url": r["html_url"],
+        "private": r["private"],
+        "commits": len(commits),
+    })
     # weight languages by MY commits in that repo, not repo size
     if r.get("language"):
         lang_bytes[r["language"]] = lang_bytes.get(r["language"], 0) + len(commits)
+
+for i in range(365):
+    key = (SINCE + dt.timedelta(days=i)).strftime("%Y-%m-%d")
+    daily.setdefault(key, 0)
+daily = {k: daily[k] for k in sorted(daily) if k >= SINCE.strftime("%Y-%m-%d")}
 
 prs = api("/search/issues", {"q": f"author:{LOGIN} is:pr is:merged", "per_page": 1})
 prs_merged = prs.get("total_count", 0) if isinstance(prs, dict) else 0
@@ -236,5 +253,25 @@ svg = f'''<svg width="900" height="460" viewBox="0 0 900 460" fill="none" xmlns=
 os.makedirs("out", exist_ok=True)
 with open("out/stats.svg", "w") as f:
     f.write(svg)
+
+payload = stats_data.build_payload(
+    now=NOW,
+    daily=daily,
+    months=[
+        (k, dt.datetime.strptime(k, "%Y-%m").strftime("%b"), months[k])
+        for k in month_keys
+    ],
+    languages=lang_rows,
+    totals={
+        "commits": total,
+        "active_days": len(days),
+        "prs_merged": prs_merged,
+        "repos_touched": touched,
+    },
+    repos=repo_rows,
+)
+with open("out/data.json", "w") as f:
+    json.dump(payload, f, separators=(",", ":"))
+
 print(f"total={total} days={len(days)} prs={prs_merged} repos={touched} "
       f"langs={[(k, round(p, 1)) for k, p in lang_rows]}")
