@@ -357,9 +357,60 @@
     text-decoration: underline;
   }
 
+  /* ---- profile: about / experience / education ---- */
+  .draft-note {
+    border: 1px dashed #ffbd2e;
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: #ffbd2e;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .about-text {
+    color: #c9d1d9;
+    font-size: 14px;
+    line-height: 1.75;
+    max-width: 68ch;
+  }
+  .about-text + .about-text { margin-top: 10px; }
+  .cv-item {
+    padding: 14px 0;
+    border-top: 1px solid #21262d;
+  }
+  .cv-item:first-of-type { border-top: 0; padding-top: 4px; }
+  .cv-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .cv-role {
+    color: #c9d1d9;
+    font-size: 14px;
+  }
+  .cv-where { color: #00e5ff; }
+  .cv-period {
+    color: #8b949e;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .cv-points {
+    margin: 8px 0 0;
+    padding-left: 18px;
+    color: #8b949e;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .cv-points li { margin-top: 3px; }
+
   /* ---- responsive ---- */
   @media (max-width: 640px) {
     #app { padding: 20px 14px 32px; }
+    .about-text { font-size: 13px; }
+    .cv-role { font-size: 13px; }
+    .cv-points { font-size: 12px; }
     .header-title { font-size: 18px; }
     .tiles { grid-template-columns: repeat(2, 1fr); }
     .tile-value { font-size: 22px; }
@@ -380,6 +431,52 @@
 <script>
 (function () {
   "use strict";
+
+  // ===========================================================================
+  //  PROFILE — edit this block only. Everything below it is layout code.
+  //
+  //  While `draft` is true the page shows a visible "placeholder" notice, so
+  //  nothing here can be mistaken for a real CV. Set it to false once every
+  //  field holds real content.
+  // ===========================================================================
+  var PROFILE = {
+    draft: true,
+
+    // One or two short paragraphs, first person. Who you are, what you build.
+    about: [
+      "[ เขียนแนะนำตัว 2-3 บรรทัด — ทำอะไร ถนัดอะไร สนใจงานแบบไหน ]",
+      "[ ย่อหน้าที่สอง ถ้าอยากขยาย — เช่น แนวทางการทำงาน หรือสิ่งที่กำลังสนใจอยู่ ]"
+    ],
+
+    // Newest first.
+    experience: [
+      {
+        role: "[ ตำแหน่ง ]",
+        where: "[ ที่ทำงาน ]",
+        period: "[ 25xx – ปัจจุบัน ]",
+        points: [
+          "[ ทำอะไร รับผิดชอบส่วนไหน ]",
+          "[ ผลลัพธ์ที่วัดได้ เช่น รองรับ traffic เท่าไหร่ ลดเวลาอะไรได้กี่ % ]"
+        ]
+      },
+      {
+        role: "[ ตำแหน่งก่อนหน้า ]",
+        where: "[ ที่ทำงาน ]",
+        period: "[ 25xx – 25xx ]",
+        points: ["[ ทำอะไร ]"]
+      }
+    ],
+
+    // Newest first.
+    education: [
+      {
+        role: "[ วุฒิ / สาขา ]",
+        where: "[ สถาบัน ]",
+        period: "[ 25xx – 25xx ]",
+        points: []
+      }
+    ]
+  };
 
   var app = document.getElementById("app");
   var PALETTE = ["#00ff9f", "#00e5ff", "#bd00ff", "#3fb950", "#ffbd2e", "#8b949e"];
@@ -681,6 +778,57 @@
   }
 
   // ---- render ----------------------------------------------------------------
+  function buildAbout() {
+    var paras = (PROFILE.about || []).filter(Boolean);
+    if (!paras.length) return null;
+    var panel = el("div", "panel section");
+    panel.appendChild(el("div", "panel-title", "WHOAMI"));
+    if (PROFILE.draft) {
+      panel.appendChild(el(
+        "div",
+        "draft-note",
+        "⚠ ส่วนประวัติยังเป็นโครง — ข้อความในวงเล็บเป็นตัวอย่าง ไม่ใช่ข้อมูลจริง"
+      ));
+    }
+    paras.forEach(function (p) {
+      panel.appendChild(el("div", "about-text", p));
+    });
+    return panel;
+  }
+
+  function buildCV(title, items) {
+    var list = (items || []).filter(Boolean);
+    if (!list.length) return null;
+    var panel = el("div", "panel section");
+    panel.appendChild(el("div", "panel-title", title));
+    list.forEach(function (item) {
+      var wrap = el("div", "cv-item");
+      var head = el("div", "cv-head");
+      var role = el("div", "cv-role", item.role || "");
+      if (item.where) {
+        role.appendChild(document.createTextNode(" · "));
+        role.appendChild(el("span", "cv-where", item.where));
+      }
+      head.appendChild(role);
+      if (item.period) head.appendChild(el("div", "cv-period", item.period));
+      wrap.appendChild(head);
+      var points = (item.points || []).filter(Boolean);
+      if (points.length) {
+        var ul = el("ul", "cv-points");
+        points.forEach(function (p) {
+          ul.appendChild(el("li", "", p));
+        });
+        wrap.appendChild(ul);
+      }
+      panel.appendChild(wrap);
+    });
+    return panel;
+  }
+
+  function appendIf(node) {
+    if (node) app.appendChild(node);
+  }
+
   function render(data) {
     app.innerHTML = "";
 
@@ -693,6 +841,9 @@
     var synced = (data.synced || "").slice(0, 10);
     header.appendChild(el("div", "header-synced", "synced " + synced));
     app.appendChild(header);
+
+    // 1b. about
+    appendIf(buildAbout());
 
     // 2. tiles
     var totals = data.totals || {};
@@ -729,6 +880,10 @@
 
     // 5. languages
     app.appendChild(buildLanguages(data.languages || []));
+
+    // 5b. experience + education
+    appendIf(buildCV("EXPERIENCE", PROFILE.experience));
+    appendIf(buildCV("EDUCATION", PROFILE.education));
 
     // 6. repos
     app.appendChild(buildRepos(data.repos || {}));
