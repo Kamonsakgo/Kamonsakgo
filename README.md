@@ -1,5 +1,7 @@
 <div align="center">
-  <img src="assets/header.svg" alt="Kamonsak — Backend Developer" width="100%" />
+  <a href="https://kamonsakgo.github.io/Kamonsakgo/">
+    <img src="assets/header.svg" alt="Kamonsak — Backend Developer" width="100%" />
+  </a>
 </div>
 
 <p align="center">
@@ -7,7 +9,9 @@
 </p>
 
 <div align="center">
-  <img src="assets/terminal.svg" alt="Terminal intro" width="92%" />
+  <a href="https://kamonsakgo.github.io/Kamonsakgo/">
+    <img src="assets/terminal.svg" alt="Terminal intro" width="92%" />
+  </a>
 </div>
 
 <br/>
@@ -40,7 +44,9 @@
 ## 🛰️ Microservices in Motion
 
 <div align="center">
-  <img src="assets/pipeline.svg" alt="Animated microservices pipeline" width="100%" />
+  <a href="https://kamonsakgo.github.io/Kamonsakgo/">
+    <img src="assets/pipeline.svg" alt="Animated microservices pipeline" width="100%" />
+  </a>
 </div>
 
 <div align="center">
