@@ -102,7 +102,7 @@ for r in repos:
     if r.get("language"):
         lang_bytes[r["language"]] = lang_bytes.get(r["language"], 0) + len(commits)
 
-for i in range(365):
+for i in range(366):
     key = (SINCE + dt.timedelta(days=i)).strftime("%Y-%m-%d")
     daily.setdefault(key, 0)
 daily = {k: daily[k] for k in sorted(daily) if k >= SINCE.strftime("%Y-%m-%d")}
