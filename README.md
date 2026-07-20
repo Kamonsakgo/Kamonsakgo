@@ -50,7 +50,10 @@
 ## 📊 Dev Stats <sub><sup>— real data (public + private), refreshed nightly</sup></sub>
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/stats/stats.svg" alt="Dev stats — updated daily" width="100%" />
+  <a href="https://kamonsakgo.github.io/Kamonsakgo/">
+    <img src="https://raw.githubusercontent.com/Kamonsakgo/Kamonsakgo/stats/stats.svg" alt="Dev stats — updated daily" width="100%" />
+  </a>
+  <sub><a href="https://kamonsakgo.github.io/Kamonsakgo/">→ click for the full dashboard — per-day commits, streaks, languages</a></sub>
 </div>
 
 <div align="center">
