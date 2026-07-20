@@ -1,21 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <link rel="icon" href="data:,">
-<title>Dev Stats — Kamonsakgo</title>
+<title>กมลศักดิ์ บรรพตะธิ — Full-Stack Developer</title>
 <style>
   :root {
     --bg: #0d1117;
-    --border: #30363d;
-    --grid: #1c2530;
-    --muted: #8b949e;
-    --text: #c9d1d9;
-    --green: #00ff9f;
-    --cyan: #00e5ff;
-    --purple: #bd00ff;
+    --surface: #11161d;
+    --border: #262d36;
+    --muted: #9aa4b2;
+    --text: #e6edf3;
+    --green: #3fdd9a;
+    --cyan: #58c8f5;
+    --purple: #c58af9;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans Thai",
+      "Sarabun", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   }
 
   * { box-sizing: border-box; }
@@ -29,20 +32,19 @@
 
   body {
     color: var(--text);
-    font-family: 'Courier New', monospace;
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
-    background-image:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 28px 28px;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   a { color: inherit; }
 
   #app {
-    max-width: 960px;
+    max-width: 780px;
     margin: 0 auto;
-    padding: 28px 24px 40px;
+    padding: 56px 24px 64px;
   }
 
   .muted { color: var(--muted); }
@@ -76,78 +78,92 @@
 
   /* ---- header ---- */
   .header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
+    padding-bottom: 30px;
+    margin-bottom: 10px;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 16px;
-    margin-bottom: 24px;
   }
   .header-title {
-    font-size: 22px;
-    font-weight: bold;
-    color: var(--green);
-    letter-spacing: 2px;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.4px;
     text-wrap: balance;
   }
   .header-subtitle {
-    margin-top: 6px;
-    font-size: 12px;
+    margin-top: 8px;
+    font-size: 17px;
+    color: var(--green);
+    font-weight: 500;
+  }
+  .header-meta {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    font-size: 14px;
     color: var(--muted);
   }
+  .header-meta a {
+    text-decoration: none;
+    border-bottom: 1px solid rgba(154, 164, 178, 0.35);
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .header-meta a:hover, .header-meta a:focus-visible {
+    color: var(--cyan);
+    border-bottom-color: var(--cyan);
+  }
   .header-synced {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
-    white-space: nowrap;
-    padding-top: 4px;
+    font-variant-numeric: tabular-nums;
   }
 
   /* ---- tiles ---- */
   .tiles {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
   .tile {
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 12px;
+    border-radius: 12px;
+    padding: 16px 12px;
     text-align: center;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
   .tile:hover {
     border-color: var(--muted);
-    box-shadow: 0 0 0 1px rgba(0, 255, 159, 0.08);
+    box-shadow: 0 0 0 1px rgba(63, 221, 154, 0.12);
   }
   .tile-value {
-    font-size: 30px;
-    font-weight: bold;
+    font-size: 28px;
+    font-weight: 700;
+    font-family: var(--mono);
     font-variant-numeric: tabular-nums;
     line-height: 1.2;
   }
   .tile-label {
     margin-top: 6px;
-    font-size: 10px;
+    font-size: 12px;
     color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 0.2px;
   }
 
   /* ---- shared panel ---- */
   .panel {
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin-bottom: 24px;
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 16px;
   }
   .panel-title {
-    font-size: 12px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 18px;
   }
 
   /* ---- heatmap ---- */
@@ -359,29 +375,18 @@
 
   /* ---- group headings ---- */
   .group {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin: 34px 0 16px;
+    margin: 44px 0 18px;
   }
-  .group:first-of-type { margin-top: 26px; }
-  .group-num {
-    color: #bd00ff;
-    font-size: 11px;
-    letter-spacing: 2px;
-    font-variant-numeric: tabular-nums;
-  }
+  .group:first-of-type { margin-top: 34px; }
   .group-name {
-    color: #00ff9f;
-    font-size: 14px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    white-space: nowrap;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
   }
-  .group-rule {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, rgba(0, 255, 159, 0.35), transparent);
+  .group-note {
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--muted);
   }
 
   /* ---- skills ---- */
@@ -395,11 +400,9 @@
   }
   .skill-row:first-of-type { border-top: 0; padding-top: 2px; }
   .skill-label {
-    color: #8b949e;
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    flex: 0 0 108px;
+    color: var(--muted);
+    font-size: 14px;
+    flex: 0 0 120px;
   }
   .skill-chips {
     display: flex;
@@ -409,11 +412,12 @@
     min-width: 180px;
   }
   .chip {
-    border: 1px solid #30363d;
-    border-radius: 5px;
-    padding: 3px 9px;
-    font-size: 12px;
-    color: #c9d1d9;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 4px 11px;
+    font-size: 14px;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.02);
   }
 
   /* ---- profile: about / experience / education ---- */
@@ -426,13 +430,13 @@
     letter-spacing: 1px;
   }
   .about-text {
-    color: #c9d1d9;
-    font-size: 14px;
-    line-height: 1.75;
-    max-width: 68ch;
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.8;
+    max-width: 62ch;
     text-wrap: pretty;
   }
-  .about-text + .about-text { margin-top: 10px; }
+  .about-text + .about-text { margin-top: 14px; }
   .cv-item {
     padding: 14px 0;
     border-top: 1px solid #21262d;
@@ -446,24 +450,30 @@
     flex-wrap: wrap;
   }
   .cv-role {
-    color: #c9d1d9;
-    font-size: 14px;
+    color: var(--text);
+    font-size: 17px;
+    font-weight: 600;
   }
-  .cv-where { color: #00e5ff; }
+  .cv-where {
+    color: var(--cyan);
+    font-weight: 500;
+  }
   .cv-period {
-    color: #8b949e;
-    font-size: 12px;
+    color: var(--muted);
+    font-size: 14px;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
   .cv-points {
-    margin: 8px 0 0;
-    padding-left: 18px;
-    color: #8b949e;
-    font-size: 13px;
-    line-height: 1.7;
+    margin: 10px 0 0;
+    padding-left: 20px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.75;
+    max-width: 66ch;
+    text-wrap: pretty;
   }
-  .cv-points li { margin-top: 3px; }
+  .cv-points li { margin-top: 6px; }
 
   /* ---- responsive ---- */
   @media (max-width: 640px) {
@@ -489,7 +499,7 @@
 </head>
 <body>
 <div id="app">
-  <div class="loading">loading stats…</div>
+  <div class="loading">กำลังโหลด…</div>
 </div>
 
 <script>
@@ -505,6 +515,15 @@
   // ===========================================================================
   var PROFILE = {
     draft: false,
+
+    name: "กมลศักดิ์ บรรพตะธิ",
+    role: "Full-Stack Developer",
+    location: "กรุงเทพฯ, ประเทศไทย",
+    links: [
+      { label: "kamonsak.go@gmail.com", url: "mailto:kamonsak.go@gmail.com" },
+      { label: "github.com/Kamonsakgo", url: "https://github.com/Kamonsakgo" },
+      { label: "LinkedIn", url: "https://www.linkedin.com/in/kamonsak-banpatathi" }
+    ],
 
     // One or two short paragraphs, first person. Who you are, what you build.
     about: [
@@ -596,7 +615,7 @@
 
   function renderError() {
     app.innerHTML = "";
-    var msg = el("div", "error", "could not load stats — try again later");
+    var msg = el("div", "error", "โหลดข้อมูลไม่สำเร็จ — ลองใหม่อีกครั้ง");
     msg.style.color = "#8b949e";
     app.appendChild(msg);
   }
@@ -738,7 +757,7 @@
   // ---- monthly bars ------------------------------------------------------
   function buildBars(months, heatmapScrollEl) {
     var panel = el("div", "panel section");
-    panel.appendChild(el("div", "panel-title", "COMMITS // MONTH"));
+    panel.appendChild(el("div", "panel-title", "Commit ต่อเดือน"));
     var row = el("div", "bars-row");
 
     var max = 1;
@@ -802,7 +821,7 @@
   // ---- languages -----------------------------------------------------------
   function buildLanguages(languages) {
     var panel = el("div", "panel section");
-    panel.appendChild(el("div", "panel-title", "LANGUAGES // WHERE MY COMMITS GO"));
+    panel.appendChild(el("div", "panel-title", "ภาษาที่ใช้"));
 
     if (!languages || !languages.length) {
       panel.appendChild(el("div", "muted", "no language data"));
@@ -838,7 +857,7 @@
   // ---- repos -----------------------------------------------------------------
   function buildRepos(repos) {
     var panel = el("div", "panel section");
-    panel.appendChild(el("div", "panel-title", "REPOS"));
+    panel.appendChild(el("div", "panel-title", "Repository ที่ลงมือทำ"));
 
     var publicRepos = (repos && repos.public) || [];
     publicRepos.forEach(function (repo) {
@@ -855,8 +874,8 @@
     var priv = (repos && repos.private) || { commits: 0, repos: 0 };
     if (priv.repos > 0) {
       var row = el("div", "repo-row private-row");
-      var label = "Private work — " + plural(priv.commits, "commit") +
-        " across " + plural(priv.repos, "repo");
+      var label = "งานใน repo ส่วนตัว — " + fmt(priv.commits) + " commits จาก " +
+        fmt(priv.repos) + " repo";
       row.appendChild(el("span", "", label));
       panel.appendChild(row);
     }
@@ -873,7 +892,7 @@
     var paras = (PROFILE.about || []).filter(Boolean);
     if (!paras.length) return null;
     var panel = el("div", "panel section");
-    panel.appendChild(el("div", "panel-title", "WHOAMI"));
+    panel.appendChild(el("div", "panel-title", "เกี่ยวกับผม"));
     if (PROFILE.draft) {
       panel.appendChild(el(
         "div",
@@ -887,11 +906,10 @@
     return panel;
   }
 
-  function buildGroup(num, name) {
+  function buildGroup(name, note) {
     var g = el("div", "group section");
-    g.appendChild(el("span", "group-num", num));
-    g.appendChild(el("span", "group-name", name));
-    g.appendChild(el("span", "group-rule"));
+    g.appendChild(el("h2", "group-name", name));
+    if (note) g.appendChild(el("div", "group-note", note));
     return g;
   }
 
@@ -901,7 +919,7 @@
     });
     if (!rows.length) return null;
     var panel = el("div", "panel section");
-    panel.appendChild(el("div", "panel-title", "SKILLS"));
+    panel.appendChild(el("div", "panel-title", "ทักษะ"));
     rows.forEach(function (row) {
       var line = el("div", "skill-row");
       line.appendChild(el("div", "skill-label", row[0]));
@@ -953,23 +971,35 @@
 
     // 1. header
     var header = el("div", "header section");
-    var left = el("div");
-    left.appendChild(el("div", "header-title", "[ DEV.STATS ]"));
-    left.appendChild(el("div", "header-subtitle", "last 365 days — public + private"));
-    header.appendChild(left);
-    var synced = (data.synced || "").slice(0, 10);
-    header.appendChild(el("div", "header-synced", "synced " + synced));
+    header.appendChild(el("h1", "header-title", PROFILE.name || "Kamonsakgo"));
+    if (PROFILE.role) header.appendChild(el("div", "header-subtitle", PROFILE.role));
+    var meta = el("div", "header-meta");
+    if (PROFILE.location) meta.appendChild(el("span", "", PROFILE.location));
+    (PROFILE.links || []).forEach(function (l) {
+      var a = el("a", "", l.label);
+      a.href = l.url;
+      if (l.url.indexOf("mailto:") !== 0) {
+        a.target = "_blank";
+        a.rel = "noopener";
+      }
+      meta.appendChild(a);
+    });
+    header.appendChild(meta);
     app.appendChild(header);
 
-    // ---- group 01: who I am ----
-    app.appendChild(buildGroup("01", "Profile"));
+    // ---- group 1: who I am ----
+    app.appendChild(buildGroup("โปรไฟล์"));
     appendIf(buildAbout());
     appendIf(buildSkills());
-    appendIf(buildCV("EXPERIENCE", PROFILE.experience));
-    appendIf(buildCV("EDUCATION", PROFILE.education));
+    appendIf(buildCV("ประสบการณ์ทำงาน", PROFILE.experience));
+    appendIf(buildCV("การศึกษา", PROFILE.education));
 
-    // ---- group 02: what the commits say ----
-    app.appendChild(buildGroup("02", "Activity"));
+    // ---- group 2: what the commits say ----
+    var synced = (data.synced || "").slice(0, 10);
+    app.appendChild(buildGroup(
+      "สถิติการเขียนโค้ด",
+      "ข้อมูลจริงจาก GitHub ย้อนหลัง 365 วัน รวม repo ส่วนตัว · อัปเดตล่าสุด " + synced
+    ));
 
     // 2. tiles
     var totals = data.totals || {};
@@ -995,7 +1025,7 @@
 
     // 3. heatmap
     var heatmapPanel = el("div", "panel section");
-    heatmapPanel.appendChild(el("div", "panel-title", "ACTIVITY"));
+    heatmapPanel.appendChild(el("div", "panel-title", "ปฏิทินการ commit รายวัน"));
     var heatmap = buildHeatmap(data.daily || {});
     heatmapPanel.appendChild(heatmap.el);
     app.appendChild(heatmapPanel);
@@ -1012,7 +1042,7 @@
 
     // 7. footer
     var footer = el("div", "footer section");
-    footer.appendChild(document.createTextNode("aggregated nightly via GitHub Actions · "));
+    footer.appendChild(document.createTextNode("หน้านี้อัปเดตอัตโนมัติทุกคืนจากข้อมูล GitHub จริง · "));
     var link = el("a", "", "github.com/Kamonsakgo");
     link.href = "https://github.com/Kamonsakgo";
     link.target = "_blank";
