@@ -273,5 +273,11 @@ payload = stats_data.build_payload(
 with open("out/data.json", "w") as f:
     json.dump(payload, f, separators=(",", ":"))
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+with open(os.path.join(HERE, "..", "web", "index.html")) as f:
+    page = f.read()
+with open("out/index.html", "w") as f:
+    f.write(page)
+
 print(f"total={total} days={len(days)} prs={prs_merged} repos={touched} "
       f"langs={[(k, round(p, 1)) for k, p in lang_rows]}")

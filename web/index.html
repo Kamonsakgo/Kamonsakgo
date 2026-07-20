@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:,">
+<title>Dev Stats — Kamonsakgo</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --border: #30363d;
+    --grid: #1c2530;
+    --muted: #8b949e;
+    --text: #c9d1d9;
+    --green: #00ff9f;
+    --cyan: #00e5ff;
+    --purple: #bd00ff;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg);
+    overflow-x: hidden;
+  }
+
+  body {
+    color: var(--text);
+    font-family: 'Courier New', monospace;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  a { color: inherit; }
+
+  #app {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 28px 24px 40px;
+  }
+
+  .muted { color: var(--muted); }
+
+  .loading, .error {
+    color: var(--muted);
+    padding: 60px 0;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  /* ---- entrance stagger ---- */
+  .section {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: fadeInUp 0.5s ease forwards;
+  }
+  .section:nth-of-type(1) { animation-delay: 0s; }
+  .section:nth-of-type(2) { animation-delay: 0.08s; }
+  .section:nth-of-type(3) { animation-delay: 0.16s; }
+  .section:nth-of-type(4) { animation-delay: 0.24s; }
+  .section:nth-of-type(5) { animation-delay: 0.32s; }
+  .section:nth-of-type(6) { animation-delay: 0.4s; }
+  .section:nth-of-type(7) { animation-delay: 0.48s; }
+  @keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .section { animation: none; opacity: 1; transform: none; }
+  }
+
+  /* ---- header ---- */
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--green);
+    letter-spacing: 2px;
+    text-wrap: balance;
+  }
+  .header-subtitle {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .header-synced {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    padding-top: 4px;
+  }
+
+  /* ---- tiles ---- */
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .tile {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .tile:hover {
+    border-color: var(--muted);
+    box-shadow: 0 0 0 1px rgba(0, 255, 159, 0.08);
+  }
+  .tile-value {
+    font-size: 30px;
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+  .tile-label {
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* ---- shared panel ---- */
+  .panel {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+  }
+  .panel-title {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  /* ---- heatmap ---- */
+  .heatmap-scroll {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .heatmap-inner {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .heatmap-months {
+    display: flex;
+    gap: 2px;
+  }
+  .heatmap-month-label {
+    width: 11px;
+    flex: 0 0 11px;
+    font-size: 9px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: visible;
+  }
+  .heatmap-grid {
+    display: flex;
+    gap: 2px;
+  }
+  .heatmap-col {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .heatmap-cell {
+    width: 11px;
+    height: 11px;
+    border-radius: 2px;
+    background: #161b22;
+    transition: opacity 0.25s ease, box-shadow 0.15s ease;
+  }
+  .heatmap-cell.empty {
+    background: transparent;
+  }
+  .heatmap-cell[data-date] {
+    cursor: pointer;
+  }
+  .heatmap-cell[data-date]:hover,
+  .heatmap-cell[data-date]:focus-visible {
+    box-shadow: 0 0 0 1px var(--cyan);
+    outline: none;
+  }
+  .heatmap-cell.dim {
+    opacity: 0.25;
+  }
+
+  .tooltip {
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translate(-50%, calc(-100% - 10px));
+    background: #161b22;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    color: var(--text);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 1000;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+  .tooltip.visible {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 14px));
+  }
+
+  /* ---- monthly bars ---- */
+  .bars-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+    height: 150px;
+  }
+  .bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 1 0;
+    height: 100%;
+    justify-content: flex-end;
+  }
+  .bar-count {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .bar {
+    width: 100%;
+    max-width: 36px;
+    min-height: 2px;
+    border: 1px solid transparent;
+    border-radius: 4px 4px 2px 2px;
+    background: linear-gradient(to bottom, #006d5b, #00ff9f);
+    cursor: pointer;
+    padding: 0;
+    display: block;
+    transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .bar:hover {
+    box-shadow: 0 0 8px rgba(0, 255, 159, 0.5);
+  }
+  .bar:active {
+    transform: scale(0.96);
+  }
+  .bar.active {
+    border-color: var(--cyan);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+  }
+  .bar-label {
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* ---- languages ---- */
+  .lang-bar {
+    display: flex;
+    width: 100%;
+    height: 14px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .lang-seg {
+    height: 100%;
+  }
+  .lang-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    margin-top: 16px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+  }
+  .legend-swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 3px;
+    margin-right: 8px;
+    flex: 0 0 9px;
+  }
+  .legend-name {
+    margin-right: 4px;
+  }
+
+  /* ---- repos ---- */
+  .repo-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .repo-row:last-child { border-bottom: none; }
+  .repo-name {
+    text-decoration: none;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    transition: color 0.15s ease;
+  }
+  .repo-name:hover, .repo-name:focus-visible {
+    color: var(--green);
+    text-decoration: underline;
+  }
+  .repo-commits {
+    flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+  .repo-row.private-row {
+    color: var(--muted);
+  }
+  .repo-row.private-row .repo-commits { color: var(--muted); }
+
+  /* ---- footer ---- */
+  .footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    padding-top: 8px;
+  }
+  .footer a {
+    color: var(--cyan);
+    text-decoration: none;
+  }
+  .footer a:hover, .footer a:focus-visible {
+    text-decoration: underline;
+  }
+
+  /* ---- responsive ---- */
+  @media (max-width: 640px) {
+    #app { padding: 20px 14px 32px; }
+    .header-title { font-size: 18px; }
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+    .tile-value { font-size: 22px; }
+    .tile-label { font-size: 9px; letter-spacing: 1.5px; }
+    .panel { padding: 14px; }
+    .bars-row { height: 110px; gap: 3px; }
+    .bar { max-width: 22px; }
+    .bar-count { font-size: 8px; }
+    .bar-label { font-size: 8px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="loading">loading stats…</div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var app = document.getElementById("app");
+  var PALETTE = ["#00ff9f", "#00e5ff", "#bd00ff", "#3fb950", "#ffbd2e", "#8b949e"];
+  var BUCKET_COLORS = ["#161b22", "#0e4429", "#006d32", "#26a641", "#00ff9f"];
+  var MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  function fmt(n) {
+    return Number(n).toLocaleString("en-US");
+  }
+
+  function plural(n, noun) {
+    return fmt(n) + " " + noun + (n === 1 ? "" : "s");
+  }
+
+  function el(tag, className, text) {
+    var e = document.createElement(tag);
+    if (className) e.className = className;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+
+  function parseISODate(s) {
+    // s is "YYYY-MM-DD" — parse as UTC midnight to avoid local-timezone drift
+    return new Date(s + "T00:00:00Z");
+  }
+
+  function renderError() {
+    app.innerHTML = "";
+    var msg = el("div", "error", "could not load stats — try again later");
+    msg.style.color = "#8b949e";
+    app.appendChild(msg);
+  }
+
+  // ---- tooltip -------------------------------------------------------------
+  var tooltip = el("div", "tooltip");
+  document.body.appendChild(tooltip);
+
+  function showTooltip(cell) {
+    var date = cell.getAttribute("data-date");
+    var count = Number(cell.getAttribute("data-count"));
+    var d = parseISODate(date);
+    var label = d.getUTCDate() + " " + MONTH_ABBR[d.getUTCMonth()] + " " + d.getUTCFullYear();
+    var countText = count === 0 ? "no commits" : (count === 1 ? "1 commit" : fmt(count) + " commits");
+    tooltip.textContent = label + " · " + countText;
+    var r = cell.getBoundingClientRect();
+    tooltip.style.left = (r.left + r.width / 2) + "px";
+    tooltip.style.top = r.top + "px";
+    tooltip.classList.add("visible");
+  }
+
+  function hideTooltip() {
+    tooltip.classList.remove("visible");
+  }
+
+  // ---- heatmap ---------------------------------------------------------------
+  function buildHeatmap(daily) {
+    var dates = Object.keys(daily).sort();
+    var max = 1;
+    dates.forEach(function (d) { if (daily[d] > max) max = daily[d]; });
+
+    var firstWeekday = dates.length ? parseISODate(dates[0]).getUTCDay() : 0;
+    var numCols = Math.max(1, Math.ceil((dates.length + firstWeekday) / 7));
+
+    var columns = [];
+    for (var c = 0; c < numCols; c++) columns.push(new Array(7).fill(null));
+
+    dates.forEach(function (date, i) {
+      var idx = i + firstWeekday;
+      var col = Math.floor(idx / 7);
+      var row = idx % 7;
+      columns[col][row] = { date: date, count: daily[date] };
+    });
+
+    function bucket(count) {
+      if (!count) return 0;
+      var r = count / max;
+      if (r <= 0.25) return 1;
+      if (r <= 0.5) return 2;
+      if (r <= 0.75) return 3;
+      return 4;
+    }
+
+    var wrap = el("div", "heatmap-scroll");
+    var inner = el("div", "heatmap-inner");
+
+    var monthsRow = el("div", "heatmap-months");
+    var gridRow = el("div", "heatmap-grid");
+
+    var lastLabeledMonth = null;
+    columns.forEach(function (col) {
+      var firstCell = col.filter(Boolean)[0];
+      var labelText = "";
+      if (firstCell) {
+        var monthKey = firstCell.date.slice(0, 7);
+        if (monthKey !== lastLabeledMonth) {
+          labelText = MONTH_ABBR[parseISODate(firstCell.date).getUTCMonth()];
+          lastLabeledMonth = monthKey;
+        }
+      }
+      monthsRow.appendChild(el("div", "heatmap-month-label", labelText));
+
+      var colEl = el("div", "heatmap-col");
+      col.forEach(function (cellData) {
+        if (!cellData) {
+          colEl.appendChild(el("div", "heatmap-cell empty"));
+          return;
+        }
+        var cellEl = el("div", "heatmap-cell");
+        cellEl.style.background = BUCKET_COLORS[bucket(cellData.count)];
+        cellEl.setAttribute("data-date", cellData.date);
+        cellEl.setAttribute("data-count", cellData.count);
+        cellEl.setAttribute("data-month", cellData.date.slice(0, 7));
+        cellEl.setAttribute("tabindex", "0");
+        colEl.appendChild(cellEl);
+      });
+      gridRow.appendChild(colEl);
+    });
+
+    inner.appendChild(monthsRow);
+    inner.appendChild(gridRow);
+    wrap.appendChild(inner);
+
+    wrap.addEventListener("mouseover", function (e) {
+      var cell = e.target.closest && e.target.closest(".heatmap-cell[data-date]");
+      if (cell) showTooltip(cell);
+    });
+    wrap.addEventListener("mouseout", function (e) {
+      var cell = e.target.closest && e.target.closest(".heatmap-cell[data-date]");
+      if (cell) hideTooltip();
+    });
+    wrap.addEventListener("focusin", function (e) {
+      var cell = e.target.closest && e.target.closest(".heatmap-cell[data-date]");
+      if (cell) showTooltip(cell);
+    });
+    wrap.addEventListener("focusout", function (e) {
+      var cell = e.target.closest && e.target.closest(".heatmap-cell[data-date]");
+      if (cell) hideTooltip();
+    });
+
+    return { el: wrap, scrollEl: wrap };
+  }
+
+  document.addEventListener("click", function (e) {
+    var cell = e.target.closest && e.target.closest(".heatmap-cell[data-date]");
+    if (cell) {
+      showTooltip(cell);
+    } else if (!e.target.closest || !e.target.closest(".tooltip")) {
+      hideTooltip();
+    }
+  });
+
+  // ---- monthly bars ------------------------------------------------------
+  function buildBars(months, heatmapScrollEl) {
+    var panel = el("div", "panel section");
+    panel.appendChild(el("div", "panel-title", "COMMITS // MONTH"));
+    var row = el("div", "bars-row");
+
+    var max = 1;
+    months.forEach(function (m) { if (m.commits > max) max = m.commits; });
+
+    var activeBar = null;
+    var activeKey = null;
+
+    var barEls = [];
+    months.forEach(function (m) {
+      var item = el("div", "bar-item");
+      item.appendChild(el("div", "bar-count", fmt(m.commits)));
+
+      var bar = el("button", "bar");
+      bar.type = "button";
+      bar.setAttribute("aria-label", m.label + ": " + plural(m.commits, "commit"));
+      var h = m.commits > 0 ? Math.max(Math.round((m.commits / max) * 100), 4) : 2;
+      bar.style.height = h + "%";
+
+      bar.addEventListener("click", function () {
+        var cells = heatmapScrollEl.querySelectorAll(".heatmap-cell[data-month]");
+        if (activeKey === m.key) {
+          // clear filter
+          cells.forEach(function (c) { c.classList.remove("dim"); });
+          if (activeBar) activeBar.classList.remove("active");
+          activeBar = null;
+          activeKey = null;
+          return;
+        }
+        if (activeBar) activeBar.classList.remove("active");
+        cells.forEach(function (c) {
+          if (c.getAttribute("data-month") === m.key) {
+            c.classList.remove("dim");
+          } else {
+            c.classList.add("dim");
+          }
+        });
+        bar.classList.add("active");
+        activeBar = bar;
+        activeKey = m.key;
+
+        var firstMatch = heatmapScrollEl.querySelector('.heatmap-cell[data-month="' + m.key + '"]');
+        if (firstMatch) {
+          var contRect = heatmapScrollEl.getBoundingClientRect();
+          var cellRect = firstMatch.getBoundingClientRect();
+          var delta = (cellRect.left - contRect.left) - (heatmapScrollEl.clientWidth / 2) + (cellRect.width / 2);
+          heatmapScrollEl.scrollTo({ left: heatmapScrollEl.scrollLeft + delta, behavior: "smooth" });
+        }
+      });
+
+      item.appendChild(bar);
+      item.appendChild(el("div", "bar-label", m.label));
+      row.appendChild(item);
+      barEls.push(bar);
+    });
+
+    panel.appendChild(row);
+    return panel;
+  }
+
+  // ---- languages -----------------------------------------------------------
+  function buildLanguages(languages) {
+    var panel = el("div", "panel section");
+    panel.appendChild(el("div", "panel-title", "LANGUAGES // WHERE MY COMMITS GO"));
+
+    if (!languages || !languages.length) {
+      panel.appendChild(el("div", "muted", "no language data"));
+      return panel;
+    }
+
+    var bar = el("div", "lang-bar");
+    var legend = el("div", "lang-legend");
+
+    languages.forEach(function (lang, i) {
+      var color = PALETTE[i % PALETTE.length];
+      var seg = el("div", "lang-seg");
+      seg.style.width = lang.pct + "%";
+      seg.style.background = color;
+      bar.appendChild(seg);
+
+      var item = el("div", "legend-item");
+      var swatch = el("span", "legend-swatch");
+      swatch.style.background = color;
+      var name = el("span", "legend-name", lang.name);
+      var pct = el("span", "muted", lang.pct + "%");
+      item.appendChild(swatch);
+      item.appendChild(name);
+      item.appendChild(pct);
+      legend.appendChild(item);
+    });
+
+    panel.appendChild(bar);
+    panel.appendChild(legend);
+    return panel;
+  }
+
+  // ---- repos -----------------------------------------------------------------
+  function buildRepos(repos) {
+    var panel = el("div", "panel section");
+    panel.appendChild(el("div", "panel-title", "REPOS"));
+
+    var publicRepos = (repos && repos.public) || [];
+    publicRepos.forEach(function (repo) {
+      var row = el("div", "repo-row");
+      var link = el("a", "repo-name", repo.name);
+      link.href = repo.url;
+      link.target = "_blank";
+      link.rel = "noopener";
+      row.appendChild(link);
+      row.appendChild(el("span", "repo-commits", fmt(repo.commits)));
+      panel.appendChild(row);
+    });
+
+    var priv = (repos && repos.private) || { commits: 0, repos: 0 };
+    if (priv.repos > 0) {
+      var row = el("div", "repo-row private-row");
+      var label = "Private work — " + plural(priv.commits, "commit") +
+        " across " + plural(priv.repos, "repo");
+      row.appendChild(el("span", "", label));
+      panel.appendChild(row);
+    }
+
+    if (!publicRepos.length && priv.repos === 0) {
+      panel.appendChild(el("div", "muted", "no repo activity"));
+    }
+
+    return panel;
+  }
+
+  // ---- render ----------------------------------------------------------------
+  function render(data) {
+    app.innerHTML = "";
+
+    // 1. header
+    var header = el("div", "header section");
+    var left = el("div");
+    left.appendChild(el("div", "header-title", "[ DEV.STATS ]"));
+    left.appendChild(el("div", "header-subtitle", "last 365 days — public + private"));
+    header.appendChild(left);
+    var synced = (data.synced || "").slice(0, 10);
+    header.appendChild(el("div", "header-synced", "synced " + synced));
+    app.appendChild(header);
+
+    // 2. tiles
+    var totals = data.totals || {};
+    var streak = data.streak || { current: 0, longest: 0 };
+    var tileDefs = [
+      { label: "COMMITS", value: fmt(totals.commits || 0), color: "#00ff9f" },
+      { label: "ACTIVE DAYS", value: fmt(totals.active_days || 0), color: "#00e5ff" },
+      { label: "PRS MERGED", value: fmt(totals.prs_merged || 0), color: "#bd00ff" },
+      { label: "REPOS TOUCHED", value: fmt(totals.repos_touched || 0), color: "#00ff9f" },
+      { label: "CURRENT STREAK", value: fmt(streak.current || 0) + " d", color: "#00e5ff" },
+      { label: "LONGEST STREAK", value: fmt(streak.longest || 0) + " d", color: "#bd00ff" }
+    ];
+    var tiles = el("div", "tiles section");
+    tileDefs.forEach(function (t) {
+      var tile = el("div", "tile");
+      var val = el("div", "tile-value", t.value);
+      val.style.color = t.color;
+      tile.appendChild(val);
+      tile.appendChild(el("div", "tile-label", t.label));
+      tiles.appendChild(tile);
+    });
+    app.appendChild(tiles);
+
+    // 3. heatmap
+    var heatmapPanel = el("div", "panel section");
+    heatmapPanel.appendChild(el("div", "panel-title", "ACTIVITY"));
+    var heatmap = buildHeatmap(data.daily || {});
+    heatmapPanel.appendChild(heatmap.el);
+    app.appendChild(heatmapPanel);
+
+    // 4. monthly bars
+    var bars = buildBars(data.months || [], heatmap.scrollEl);
+    app.appendChild(bars);
+
+    // 5. languages
+    app.appendChild(buildLanguages(data.languages || []));
+
+    // 6. repos
+    app.appendChild(buildRepos(data.repos || {}));
+
+    // 7. footer
+    var footer = el("div", "footer section");
+    footer.appendChild(document.createTextNode("aggregated nightly via GitHub Actions · "));
+    var link = el("a", "", "github.com/Kamonsakgo");
+    link.href = "https://github.com/Kamonsakgo";
+    link.target = "_blank";
+    link.rel = "noopener";
+    footer.appendChild(link);
+    app.appendChild(footer);
+  }
+
+  fetch("data.json")
+    .then(function (r) {
+      if (!r.ok) throw new Error("bad status " + r.status);
+      return r.json();
+    })
+    .then(function (data) {
+      render(data);
+    })
+    .catch(function () {
+      renderError();
+    });
+})();
+</script>
+</body>
+</html>
