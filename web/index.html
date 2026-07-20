@@ -357,6 +357,65 @@
     text-decoration: underline;
   }
 
+  /* ---- group headings ---- */
+  .group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 34px 0 16px;
+  }
+  .group:first-of-type { margin-top: 26px; }
+  .group-num {
+    color: #bd00ff;
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .group-name {
+    color: #00ff9f;
+    font-size: 14px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .group-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(0, 255, 159, 0.35), transparent);
+  }
+
+  /* ---- skills ---- */
+  .skill-row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 9px 0;
+    border-top: 1px solid #21262d;
+    flex-wrap: wrap;
+  }
+  .skill-row:first-of-type { border-top: 0; padding-top: 2px; }
+  .skill-label {
+    color: #8b949e;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    flex: 0 0 108px;
+  }
+  .skill-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+    min-width: 180px;
+  }
+  .chip {
+    border: 1px solid #30363d;
+    border-radius: 5px;
+    padding: 3px 9px;
+    font-size: 12px;
+    color: #c9d1d9;
+  }
+
   /* ---- profile: about / experience / education ---- */
   .draft-note {
     border: 1px dashed #ffbd2e;
@@ -371,6 +430,7 @@
     font-size: 14px;
     line-height: 1.75;
     max-width: 68ch;
+    text-wrap: pretty;
   }
   .about-text + .about-text { margin-top: 10px; }
   .cv-item {
@@ -411,6 +471,10 @@
     .about-text { font-size: 13px; }
     .cv-role { font-size: 13px; }
     .cv-points { font-size: 12px; }
+    .group { margin: 26px 0 14px; gap: 10px; }
+    .group-name { font-size: 12px; letter-spacing: 3px; }
+    .skill-label { flex-basis: 100%; }
+    .chip { font-size: 11px; }
     .header-title { font-size: 18px; }
     .tiles { grid-template-columns: repeat(2, 1fr); }
     .tile-value { font-size: 22px; }
@@ -482,6 +546,16 @@
           "Deploy บน DigitalOcean และถูกใช้งานจริงในการสัมภาษณ์ TCAS รอบ 1 ของหลักสูตร Data Science and Software Innovation"
         ]
       }
+    ],
+
+    // Grouped by category. Each row is [label, [items…]].
+    skills: [
+      ["Languages", ["Go", "PHP", "Python", "TypeScript", "JavaScript"]],
+      ["Back-end", ["Laravel", "Django", "Gin", "Fiber", "REST API", "Microservices"]],
+      ["Front-end", ["Vue", "Nuxt"]],
+      ["Data", ["MySQL", "MongoDB"]],
+      ["Cloud & Ops", ["AWS", "S3", "Docker", "DigitalOcean", "Linux"]],
+      ["Tools", ["Git", "GitHub Actions", "Swagger", "Postman"]]
     ],
 
     // Newest first.
@@ -813,6 +887,34 @@
     return panel;
   }
 
+  function buildGroup(num, name) {
+    var g = el("div", "group section");
+    g.appendChild(el("span", "group-num", num));
+    g.appendChild(el("span", "group-name", name));
+    g.appendChild(el("span", "group-rule"));
+    return g;
+  }
+
+  function buildSkills() {
+    var rows = (PROFILE.skills || []).filter(function (r) {
+      return r && r[1] && r[1].length;
+    });
+    if (!rows.length) return null;
+    var panel = el("div", "panel section");
+    panel.appendChild(el("div", "panel-title", "SKILLS"));
+    rows.forEach(function (row) {
+      var line = el("div", "skill-row");
+      line.appendChild(el("div", "skill-label", row[0]));
+      var chips = el("div", "skill-chips");
+      row[1].forEach(function (s) {
+        chips.appendChild(el("span", "chip", s));
+      });
+      line.appendChild(chips);
+      panel.appendChild(line);
+    });
+    return panel;
+  }
+
   function buildCV(title, items) {
     var list = (items || []).filter(Boolean);
     if (!list.length) return null;
@@ -859,8 +961,15 @@
     header.appendChild(el("div", "header-synced", "synced " + synced));
     app.appendChild(header);
 
-    // 1b. about
+    // ---- group 01: who I am ----
+    app.appendChild(buildGroup("01", "Profile"));
     appendIf(buildAbout());
+    appendIf(buildSkills());
+    appendIf(buildCV("EXPERIENCE", PROFILE.experience));
+    appendIf(buildCV("EDUCATION", PROFILE.education));
+
+    // ---- group 02: what the commits say ----
+    app.appendChild(buildGroup("02", "Activity"));
 
     // 2. tiles
     var totals = data.totals || {};
@@ -897,10 +1006,6 @@
 
     // 5. languages
     app.appendChild(buildLanguages(data.languages || []));
-
-    // 5b. experience + education
-    appendIf(buildCV("EXPERIENCE", PROFILE.experience));
-    appendIf(buildCV("EDUCATION", PROFILE.education));
 
     // 6. repos
     app.appendChild(buildRepos(data.repos || {}));
