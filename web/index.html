@@ -306,7 +306,7 @@
     flex: 0 0 9px;
   }
   .legend-name {
-    margin-right: 4px;
+    white-space: pre;
   }
 
   /* ---- repos ---- */
@@ -440,18 +440,34 @@
     var max = 1;
     dates.forEach(function (d) { if (daily[d] > max) max = daily[d]; });
 
-    var firstWeekday = dates.length ? parseISODate(dates[0]).getUTCDay() : 0;
-    var numCols = Math.max(1, Math.ceil((dates.length + firstWeekday) / 7));
-
     var columns = [];
-    for (var c = 0; c < numCols; c++) columns.push(new Array(7).fill(null));
+    if (dates.length) {
+      // Each cell's row/col is derived from its own date, not its position in
+      // the array — a missing day upstream then leaves a hole in the grid
+      // instead of shifting every later cell onto the wrong weekday row.
+      var firstDate = parseISODate(dates[0]);
+      var firstWeekday = firstDate.getUTCDay();
+      // UTC-midnight timestamp of the Sunday on/before the first date — the
+      // column-0/row-0 anchor for week-offset math.
+      var weekAnchorMs = firstDate.getTime() - firstWeekday * 86400000;
 
-    dates.forEach(function (date, i) {
-      var idx = i + firstWeekday;
-      var col = Math.floor(idx / 7);
-      var row = idx % 7;
-      columns[col][row] = { date: date, count: daily[date] };
-    });
+      var maxCol = 0;
+      var placements = dates.map(function (date) {
+        var d = parseISODate(date);
+        var row = d.getUTCDay();
+        var col = Math.floor((d.getTime() - weekAnchorMs) / 86400000 / 7);
+        if (col > maxCol) maxCol = col;
+        return { date: date, row: row, col: col };
+      });
+
+      var numCols = maxCol + 1;
+      for (var c = 0; c < numCols; c++) columns.push(new Array(7).fill(null));
+      placements.forEach(function (p) {
+        columns[p.col][p.row] = { date: p.date, count: daily[p.date] };
+      });
+    } else {
+      columns.push(new Array(7).fill(null));
+    }
 
     function bucket(count) {
       if (!count) return 0;
@@ -618,7 +634,7 @@
       var item = el("div", "legend-item");
       var swatch = el("span", "legend-swatch");
       swatch.style.background = color;
-      var name = el("span", "legend-name", lang.name);
+      var name = el("span", "legend-name", lang.name + " ");
       var pct = el("span", "muted", lang.pct + "%");
       item.appendChild(swatch);
       item.appendChild(name);
