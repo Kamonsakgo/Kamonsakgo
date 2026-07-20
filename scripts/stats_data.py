@@ -23,3 +23,42 @@ def compute_streaks(daily, today):
         day -= dt.timedelta(days=1)
 
     return {"current": current, "longest": longest}
+
+
+WINDOW_DAYS = 365
+
+
+def build_payload(*, now, daily, months, languages, totals, repos):
+    """Assemble the data.json structure served to the dashboard page.
+
+    Private repos are collapsed into a single aggregate — their names and URLs
+    are dropped here and never reach the published file.
+    """
+    public = sorted(
+        (
+            {"name": r["name"], "url": r["url"], "commits": r["commits"]}
+            for r in repos
+            if not r["private"]
+        ),
+        key=lambda r: (-r["commits"], r["name"]),
+    )
+    private = [r for r in repos if r["private"]]
+
+    return {
+        "synced": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "window_days": WINDOW_DAYS,
+        "totals": dict(totals),
+        "streak": compute_streaks(daily, now.date()),
+        "daily": dict(daily),
+        "months": [
+            {"key": k, "label": label, "commits": c} for k, label, c in months
+        ],
+        "languages": [{"name": n, "pct": round(p, 1)} for n, p in languages],
+        "repos": {
+            "public": public,
+            "private": {
+                "commits": sum(r["commits"] for r in private),
+                "repos": len(private),
+            },
+        },
+    }
