@@ -18,14 +18,16 @@ def compute_streaks(daily, today):
 
     current = 0
     day = today
+    if daily.get(day.strftime("%Y-%m-%d"), 0) == 0:
+        # `today` is still in progress at publish time — a day with no
+        # commits *yet* must not break the streak. Only a completed day
+        # (yesterday and earlier) with zero commits ends it.
+        day -= dt.timedelta(days=1)
     while daily.get(day.strftime("%Y-%m-%d"), 0) > 0:
         current += 1
         day -= dt.timedelta(days=1)
 
     return {"current": current, "longest": longest}
-
-
-WINDOW_DAYS = 365
 
 
 def build_payload(*, now, daily, months, languages, totals, repos):
@@ -46,7 +48,7 @@ def build_payload(*, now, daily, months, languages, totals, repos):
 
     return {
         "synced": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "window_days": WINDOW_DAYS,
+        "window_days": len(daily),
         "totals": dict(totals),
         "streak": compute_streaks(daily, now.date()),
         "daily": dict(daily),
