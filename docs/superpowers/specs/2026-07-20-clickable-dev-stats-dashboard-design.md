@@ -78,10 +78,14 @@ Rules:
 
 The SVG output is unchanged.
 
-### 2. `out/index.html` — the dashboard
+### 2. `web/index.html` — the dashboard
 
 One self-contained file: inline CSS and JS, no CDN, no build step, no dependencies.
 It fetches `data.json` from the same directory at load.
+
+`out/` is gitignored, so the page is versioned at `web/index.html` and copied to
+`out/index.html` by `gen_stats.py` at generate time. That keeps the publish step
+unchanged — the workflow still just pushes `out/`.
 
 Visual language matches the SVG: background `#0d1117`, neon accents `#00ff9f`,
 `#00e5ff`, `#bd00ff`, muted text `#8b949e`, `Courier New` monospace.
@@ -125,15 +129,13 @@ README change, or accept a short window where the link is dead.
 ```
 GitHub API (METRICS_TOKEN, public + private)
   → gen_stats.py
-      → out/stats.svg   (unchanged, embedded in README)
-      → out/data.json   (new)
+      → out/stats.svg    (unchanged, embedded in README)
+      → out/data.json    (new)
+      → out/index.html   (new, copied verbatim from web/index.html)
   → workflow pushes out/ to branch stats
       → raw.githubusercontent.com serves stats.svg
       → GitHub Pages serves index.html + data.json
 ```
-
-`index.html` is a static asset committed in `out/`, published unchanged by the same
-push.
 
 ## Error handling
 
