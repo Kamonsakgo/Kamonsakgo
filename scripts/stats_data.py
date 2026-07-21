@@ -30,11 +30,15 @@ def compute_streaks(daily, today):
     return {"current": current, "longest": longest}
 
 
-def build_payload(*, now, daily, months, languages, totals, repos):
+def build_payload(*, now, daily, months, languages, totals, repos, streak=None):
     """Assemble the data.json structure served to the dashboard page.
 
     Private repos are collapsed into a single aggregate — their names and URLs
     are dropped here and never reach the published file.
+
+    `daily` is the heatmap window (last ~year). `streak`, when given, is used
+    verbatim (so it can reflect all-time history rather than just `daily`);
+    otherwise it is computed from `daily`.
     """
     public = sorted(
         (
@@ -50,7 +54,7 @@ def build_payload(*, now, daily, months, languages, totals, repos):
         "synced": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "window_days": len(daily),
         "totals": dict(totals),
-        "streak": compute_streaks(daily, now.date()),
+        "streak": streak if streak is not None else compute_streaks(daily, now.date()),
         "daily": dict(daily),
         "months": [
             {"key": k, "label": label, "commits": c} for k, label, c in months

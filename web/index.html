@@ -983,7 +983,7 @@
   // ---- monthly bars ------------------------------------------------------
   function buildBars(months, heatmapScrollEl) {
     var panel = el("div", "panel section");
-    panel.appendChild(el("div", "panel-title", "Commit ต่อเดือน"));
+    panel.appendChild(el("div", "panel-title", "Commit ต่อเดือน (12 เดือนล่าสุด)"));
     var row = el("div", "bars-row");
 
     var max = 1;
@@ -1222,7 +1222,7 @@
     var synced = (data.synced || "").slice(0, 10);
     app.appendChild(buildGroup(
       "สถิติการเขียนโค้ด",
-      "ข้อมูลจริงจาก GitHub ย้อนหลัง 365 วัน รวม repo ส่วนตัว · อัปเดตล่าสุด " + synced
+      "ตัวเลขรวมทั้งหมดตั้งแต่เริ่มใช้ GitHub (รวม repo ส่วนตัว) · กราฟด้านล่างคือ 1 ปีล่าสุด · อัปเดต " + synced
     ));
 
     // 2. tiles
@@ -1252,7 +1252,7 @@
 
     // 3. heatmap
     var heatmapPanel = el("div", "panel section");
-    heatmapPanel.appendChild(el("div", "panel-title", "ปฏิทินการ commit รายวัน"));
+    heatmapPanel.appendChild(el("div", "panel-title", "ปฏิทินการ commit (1 ปีล่าสุด)"));
     var heatmap = buildHeatmap(data.daily || {});
     heatmapPanel.appendChild(heatmap.el);
     app.appendChild(heatmapPanel);

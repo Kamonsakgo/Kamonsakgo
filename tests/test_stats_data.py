@@ -131,6 +131,20 @@ class BuildPayloadTest(unittest.TestCase):
         self.assertEqual(result["streak"], {"current": 2, "longest": 2})
         self.assertEqual(result["daily"]["2026-07-20"], 5)
 
+    def test_explicit_streak_overrides_computed(self):
+        # when the caller passes an all-time streak, build_payload uses it
+        # verbatim instead of computing one from the (windowed) daily map
+        result = stats_data.build_payload(
+            now=dt.datetime(2026, 7, 20, 0, 30, tzinfo=dt.timezone.utc),
+            daily={"2026-07-19": 3, "2026-07-20": 5},
+            streak={"current": 23, "longest": 140},
+            months=[],
+            languages=[],
+            totals={"commits": 1, "active_days": 1, "prs_merged": 0, "repos_touched": 1},
+            repos=[],
+        )
+        self.assertEqual(result["streak"], {"current": 23, "longest": 140})
+
 
 if __name__ == "__main__":
     unittest.main()

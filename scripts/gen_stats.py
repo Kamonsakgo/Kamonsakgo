@@ -60,7 +60,7 @@ repos = all_pages("/user/repos", {
     "affiliation": "owner,collaborator,organization_member",
     "sort": "pushed",
 })
-repos = [r for r in repos if not r["fork"] and r["pushed_at"] >= SINCE_ISO]
+repos = [r for r in repos if not r["fork"]]  # all-time — no recency filter
 
 month_keys = []
 cur = NOW.replace(day=1)
@@ -79,8 +79,7 @@ repo_rows = []
 
 for r in repos:
     commits = all_pages(f"/repos/{r['full_name']}/commits", {
-        "author": LOGIN,
-        "since": SINCE_ISO,
+        "author": LOGIN,  # all-time — every commit by this author
     })
     if not commits:
         continue
@@ -102,10 +101,27 @@ for r in repos:
     if r.get("language"):
         lang_bytes[r["language"]] = lang_bytes.get(r["language"], 0) + len(commits)
 
+# streak is computed over the ENTIRE history. compute_streaks needs a dense
+# map (zero days present) to detect gaps, but all-time `daily` only holds days
+# that have commits — so fill every day from the first commit to today first.
+if daily:
+    start = dt.datetime.strptime(min(daily), "%Y-%m-%d").date()
+    dense = dict(daily)
+    day = start
+    while day <= NOW.date():
+        dense.setdefault(day.strftime("%Y-%m-%d"), 0)
+        day += dt.timedelta(days=1)
+    streak = stats_data.compute_streaks(dense, NOW.date())
+else:
+    streak = {"current": 0, "longest": 0}
+
+# the heatmap only shows the last year: zero-fill and slice to that window
+daily_heatmap = dict(daily)
 for i in range(366):
     key = (SINCE + dt.timedelta(days=i)).strftime("%Y-%m-%d")
-    daily.setdefault(key, 0)
-daily = {k: daily[k] for k in sorted(daily) if k >= SINCE.strftime("%Y-%m-%d")}
+    daily_heatmap.setdefault(key, 0)
+window_start = SINCE.strftime("%Y-%m-%d")
+daily_heatmap = {k: daily_heatmap[k] for k in sorted(daily_heatmap) if k >= window_start}
 
 prs = api("/search/issues", {"q": f"author:{LOGIN} is:pr is:merged", "per_page": 1})
 prs_merged = prs.get("total_count", 0) if isinstance(prs, dict) else 0
@@ -133,7 +149,7 @@ def fmt(n):
 
 
 tiles = [
-    (fmt(total), "COMMITS / 365D"),
+    (fmt(total), "COMMITS · ALL-TIME"),
     (fmt(len(days)), "ACTIVE DAYS"),
     (fmt(prs_merged), "PRs MERGED"),
     (fmt(touched), "REPOS TOUCHED"),
@@ -221,7 +237,7 @@ svg = f'''<svg width="900" height="460" viewBox="0 0 900 460" fill="none" xmlns=
   </g>
 
   <g font-family="'Courier New', monospace">
-    <text x="34" y="38" font-size="13" fill="#3fb950">[ DEV.STATS ] :: last 365 days — public + private</text>
+    <text x="34" y="38" font-size="13" fill="#3fb950">[ DEV.STATS ] :: all-time — public + private</text>
     <circle cx="718" cy="33" r="4" fill="#00ff9f" filter="url(#sGlow)">
       <animate attributeName="opacity" values="1;0.2;1" dur="1.6s" repeatCount="indefinite"/>
     </circle>
@@ -256,7 +272,8 @@ with open("out/stats.svg", "w") as f:
 
 payload = stats_data.build_payload(
     now=NOW,
-    daily=daily,
+    daily=daily_heatmap,
+    streak=streak,
     months=[
         (k, dt.datetime.strptime(k, "%Y-%m").strftime("%b"), months[k])
         for k in month_keys
