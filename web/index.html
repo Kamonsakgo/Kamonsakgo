@@ -94,6 +94,13 @@
   @media (prefers-reduced-motion: reduce) {
     .section { animation: none; opacity: 1; transform: none; }
   }
+  /* When the Motion library loads, it owns every entrance — silence the CSS one. */
+  .has-motion .section {
+    animation: none;
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .has-motion .bar { transform-origin: bottom; }
 
   /* ---- header ---- */
   .header {
@@ -874,6 +881,7 @@
       var seg = el("div", "lang-seg");
       seg.style.width = lang.pct + "%";
       seg.style.background = color;
+      seg.setAttribute("data-w", lang.pct);
       bar.appendChild(seg);
 
       var row = el("div", "lang-row");
@@ -1054,18 +1062,21 @@
     var totals = data.totals || {};
     var streak = data.streak || { current: 0, longest: 0 };
     var tileDefs = [
-      { label: "COMMITS", value: fmt(totals.commits || 0), color: "#00ff9f" },
-      { label: "ACTIVE DAYS", value: fmt(totals.active_days || 0), color: "#00e5ff" },
-      { label: "PRS MERGED", value: fmt(totals.prs_merged || 0), color: "#bd00ff" },
-      { label: "REPOS TOUCHED", value: fmt(totals.repos_touched || 0), color: "#00ff9f" },
-      { label: "CURRENT STREAK", value: fmt(streak.current || 0) + " d", color: "#00e5ff" },
-      { label: "LONGEST STREAK", value: fmt(streak.longest || 0) + " d", color: "#bd00ff" }
+      { label: "COMMITS", n: totals.commits || 0, suffix: "", color: "#00ff9f" },
+      { label: "ACTIVE DAYS", n: totals.active_days || 0, suffix: "", color: "#00e5ff" },
+      { label: "PRS MERGED", n: totals.prs_merged || 0, suffix: "", color: "#bd00ff" },
+      { label: "REPOS TOUCHED", n: totals.repos_touched || 0, suffix: "", color: "#00ff9f" },
+      { label: "CURRENT STREAK", n: streak.current || 0, suffix: " d", color: "#00e5ff" },
+      { label: "LONGEST STREAK", n: streak.longest || 0, suffix: " d", color: "#bd00ff" }
     ];
     var tiles = el("div", "tiles section");
     tileDefs.forEach(function (t) {
       var tile = el("div", "tile");
-      var val = el("div", "tile-value", t.value);
+      var val = el("div", "tile-value", fmt(t.n) + t.suffix);
       val.style.color = t.color;
+      // markers so Motion can count these up from zero when they scroll in
+      val.setAttribute("data-count", t.n);
+      val.setAttribute("data-suffix", t.suffix);
       tile.appendChild(val);
       tile.appendChild(el("div", "tile-label", t.label));
       tiles.appendChild(tile);
@@ -1097,17 +1108,117 @@
     app.appendChild(footer);
   }
 
-  fetch("data.json")
-    .then(function (r) {
+  // --------------------------------------------------------------------------
+  //  Motion — optional enhancement loaded from CDN. If the import fails, times
+  //  out, or the visitor prefers reduced motion, the page keeps its CSS
+  //  animations and nothing here runs.
+  // --------------------------------------------------------------------------
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var motionReady = reduceMotion
+    ? Promise.resolve(null)
+    : Promise.race([
+        import("https://cdn.jsdelivr.net/npm/motion@11.13.5/+esm")
+          .catch(function () { return null; }),
+        new Promise(function (resolve) { setTimeout(function () { resolve(null); }, 1500); })
+      ]).then(function (m) {
+        return (m && typeof m.animate === "function") ? m : null;
+      });
+
+  function applyMotion(m) {
+    var animate = m.animate, inView = m.inView, stagger = m.stagger,
+        hover = m.hover, press = m.press, spring = m.spring;
+    var soft = { type: spring, stiffness: 220, damping: 26 };
+    var easeOut = [0.16, 1, 0.3, 1];
+
+    // 1. every section eases up into place as it scrolls into view
+    document.querySelectorAll(".section").forEach(function (sec) {
+      inView(sec, function (elm) {
+        animate(elm,
+          { opacity: [0, 1], transform: ["translateY(16px)", "translateY(0px)"] },
+          soft);
+      }, { amount: 0.12 });
+    });
+
+    // 2. stat tiles count up from zero the moment they arrive
+    document.querySelectorAll(".tile-value[data-count]").forEach(function (elm) {
+      var target = Number(elm.getAttribute("data-count")) || 0;
+      var suffix = elm.getAttribute("data-suffix") || "";
+      inView(elm, function () {
+        animate(0, target, {
+          duration: 1.1, ease: easeOut,
+          onUpdate: function (v) { elm.textContent = fmt(Math.round(v)) + suffix; }
+        });
+      }, { amount: 0.6 });
+    });
+
+    // 3. monthly bars grow from the baseline, left to right
+    var bars = document.querySelectorAll(".bar");
+    if (bars.length) {
+      inView(bars[0].closest(".panel"), function () {
+        bars.forEach(function (bar, i) {
+          animate(bar, { transform: ["scaleY(0)", "scaleY(1)"] },
+            { delay: i * 0.04, type: spring, stiffness: 240, damping: 22 });
+        });
+      }, { amount: 0.3 });
+    }
+
+    // 4. language segments sweep out to their share
+    document.querySelectorAll(".lang-seg[data-w]").forEach(function (seg, i) {
+      var w = seg.getAttribute("data-w") + "%";
+      inView(seg.closest(".panel"), function () {
+        animate(seg, { width: ["0%", w] }, { delay: i * 0.06, duration: 0.7, ease: easeOut });
+      }, { amount: 0.4 });
+    });
+
+    // 5. hover lifts on tiles and skill chips
+    hover(".tile", function (elm) {
+      animate(elm, { transform: "translateY(-4px)" }, { type: spring, stiffness: 400, damping: 20 });
+      return function () {
+        animate(elm, { transform: "translateY(0px)" }, { type: spring, stiffness: 400, damping: 26 });
+      };
+    });
+    hover(".chip", function (elm) {
+      animate(elm, { transform: "scale(1.06)" }, { type: spring, stiffness: 500, damping: 18 });
+      return function () {
+        animate(elm, { transform: "scale(1)" }, { type: spring, stiffness: 500, damping: 24 });
+      };
+    });
+
+    // 6. press feedback on the month bars
+    press(".bar", function (elm) {
+      animate(elm, { transform: "scaleY(1) scale(0.95)" }, { duration: 0.12 });
+      return function () {
+        animate(elm, { transform: "scaleY(1) scale(1)" }, { type: spring, stiffness: 400, damping: 18 });
+      };
+    });
+  }
+
+  Promise.all([
+    fetch("data.json").then(function (r) {
       if (!r.ok) throw new Error("bad status " + r.status);
       return r.json();
-    })
-    .then(function (data) {
-      render(data);
-    })
-    .catch(function () {
-      renderError();
-    });
+    }),
+    motionReady
+  ]).then(function (out) {
+    var data = out[0], motion = out[1];
+    if (motion) document.documentElement.classList.add("has-motion");
+    render(data);
+    if (motion) {
+      try {
+        applyMotion(motion);
+      } catch (e) {
+        // never let a broken enhancement leave content stuck hidden
+        document.querySelectorAll(".section").forEach(function (s) {
+          s.style.opacity = 1;
+          s.style.transform = "none";
+        });
+      }
+    }
+  }).catch(function () {
+    renderError();
+  });
 })();
 </script>
 </body>
