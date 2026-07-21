@@ -524,39 +524,6 @@
     white-space: pre;
   }
 
-  /* ---- repos ---- */
-  .repo-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .repo-row:last-child { border-bottom: none; }
-  .repo-name {
-    text-decoration: none;
-    color: var(--text);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
-    transition: color 0.15s ease;
-  }
-  .repo-name:hover, .repo-name:focus-visible {
-    color: var(--green);
-    text-decoration: underline;
-  }
-  .repo-commits {
-    flex: 0 0 auto;
-    font-variant-numeric: tabular-nums;
-    color: var(--muted);
-  }
-  .repo-row.private-row {
-    color: var(--muted);
-  }
-  .repo-row.private-row .repo-commits { color: var(--muted); }
-
   /* ---- footer ---- */
   .footer {
     text-align: center;
@@ -1113,38 +1080,6 @@
   }
 
   // ---- repos -----------------------------------------------------------------
-  function buildRepos(repos) {
-    var panel = el("div", "panel section");
-    panel.appendChild(el("div", "panel-title", "Repository ที่ลงมือทำ"));
-
-    var publicRepos = (repos && repos.public) || [];
-    publicRepos.forEach(function (repo) {
-      var row = el("div", "repo-row");
-      var link = el("a", "repo-name", repo.name);
-      link.href = repo.url;
-      link.target = "_blank";
-      link.rel = "noopener";
-      row.appendChild(link);
-      row.appendChild(el("span", "repo-commits", fmt(repo.commits)));
-      panel.appendChild(row);
-    });
-
-    var priv = (repos && repos.private) || { commits: 0, repos: 0 };
-    if (priv.repos > 0) {
-      var row = el("div", "repo-row private-row");
-      var label = "งานใน repo ส่วนตัว — " + fmt(priv.commits) + " commits จาก " +
-        fmt(priv.repos) + " repo";
-      row.appendChild(el("span", "", label));
-      panel.appendChild(row);
-    }
-
-    if (!publicRepos.length && priv.repos === 0) {
-      panel.appendChild(el("div", "muted", "no repo activity"));
-    }
-
-    return panel;
-  }
-
   // ---- render ----------------------------------------------------------------
   function buildAbout() {
     var paras = (PROFILE.about || []).filter(Boolean);
@@ -1326,10 +1261,7 @@
     var bars = buildBars(data.months || [], heatmap.scrollEl);
     app.appendChild(bars);
 
-    // 5. repos
-    app.appendChild(buildRepos(data.repos || {}));
-
-    // 7. footer
+    // 5. footer
     var footer = el("div", "footer section");
     footer.appendChild(document.createTextNode("หน้านี้อัปเดตอัตโนมัติทุกคืนจากข้อมูล GitHub จริง · "));
     var link = el("a", "", "github.com/Kamonsakgo");
