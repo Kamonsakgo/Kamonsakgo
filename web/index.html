@@ -298,10 +298,21 @@
     margin-bottom: 16px;
   }
   .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-size: 15px;
     font-weight: 600;
     color: var(--text);
     margin-bottom: 18px;
+  }
+  .panel-title::before {
+    content: "";
+    width: 4px;
+    height: 15px;
+    border-radius: 2px;
+    background: linear-gradient(var(--green), var(--cyan));
+    flex: 0 0 auto;
   }
 
   /* ---- heatmap ---- */
@@ -555,9 +566,22 @@
   }
   .skill-row:first-of-type { border-top: 0; padding-top: 2px; }
   .skill-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     color: var(--muted);
     font-size: 14px;
     flex: 0 0 120px;
+  }
+  .skill-label::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    color: var(--dot, var(--green));
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
   }
   .skill-chips {
     display: flex;
@@ -573,6 +597,13 @@
     font-size: 14px;
     color: var(--text);
     background: rgba(255, 255, 255, 0.02);
+    cursor: default;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+  .chip:hover {
+    border-color: var(--cyan);
+    background: rgba(88, 200, 245, 0.07);
+    box-shadow: 0 0 12px rgba(88, 200, 245, 0.22);
   }
 
   /* ---- profile: about / experience / education ---- */
@@ -584,6 +615,20 @@
     font-size: 12px;
     letter-spacing: 1px;
   }
+  .about {
+    position: relative;
+    padding-left: 16px;
+  }
+  .about::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 2px;
+    bottom: 2px;
+    width: 3px;
+    border-radius: 3px;
+    background: linear-gradient(var(--green), var(--cyan), var(--purple));
+  }
   .about-text {
     color: var(--text);
     font-size: 16px;
@@ -593,10 +638,34 @@
   }
   .about-text + .about-text { margin-top: 14px; }
   .cv-item {
-    padding: 14px 0;
-    border-top: 1px solid #21262d;
+    position: relative;
+    padding: 2px 0 22px 26px;
   }
-  .cv-item:first-of-type { border-top: 0; padding-top: 4px; }
+  /* the timeline rail */
+  .cv-item::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(88, 200, 245, 0.25);
+  }
+  .cv-item:first-of-type::before { top: 9px; }
+  .cv-item:last-of-type::before { bottom: auto; height: 9px; }
+  /* the glowing node */
+  .cv-item::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 3px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--cyan);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 10px rgba(88, 200, 245, 0.85);
+  }
   .cv-head {
     display: flex;
     justify-content: space-between;
@@ -1056,9 +1125,11 @@
         "⚠ ส่วนประวัติยังเป็นโครง — ข้อความในวงเล็บเป็นตัวอย่าง ไม่ใช่ข้อมูลจริง"
       ));
     }
+    var body = el("div", "about");
     paras.forEach(function (p) {
-      panel.appendChild(el("div", "about-text", p));
+      body.appendChild(el("div", "about-text", p));
     });
+    panel.appendChild(body);
     return panel;
   }
 
@@ -1076,8 +1147,10 @@
     if (!rows.length) return null;
     var panel = el("div", "panel section");
     panel.appendChild(el("div", "panel-title", "ทักษะ"));
-    rows.forEach(function (row) {
+    var dotColors = ["#3fdd9a", "#58c8f5", "#c58af9", "#3fb950", "#ffbd2e", "#ff6ac1"];
+    rows.forEach(function (row, i) {
       var line = el("div", "skill-row");
+      line.style.setProperty("--dot", dotColors[i % dotColors.length]);
       line.appendChild(el("div", "skill-label", row[0]));
       var chips = el("div", "skill-chips");
       row[1].forEach(function (s) {
