@@ -82,10 +82,14 @@
     opacity: 0.15;
     mix-blend-mode: screen;
   }
-  .nebula.n-float { animation: nebfloat 22s ease-in-out infinite; }
+  .nebula.n-float { animation: nebfloat 22s ease-in-out infinite, blobmorph 18s ease-in-out infinite; }
   @keyframes nebfloat {
     0%, 100% { transform: translate(0, 0); }
     50% { transform: translate(34px, -26px); }
+  }
+  @keyframes blobmorph {
+    0%, 100% { border-radius: 42% 58% 55% 45% / 48% 42% 58% 52%; }
+    50% { border-radius: 58% 42% 45% 55% / 55% 58% 42% 45%; }
   }
   .shooting {
     position: absolute;
@@ -98,7 +102,7 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .star-layer, .nebula.n-float,
-    .header::before, .avatar-wrap::before, .header-title { animation: none !important; }
+    .header::before, .avatar-wrap::before, .header-title, .contact-link { animation: none !important; }
   }
 
   /* ---- two-column shell: profile rail + main column ---- */
@@ -234,21 +238,46 @@
   }
   .header-meta {
     margin-top: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 9px;
     font-size: 14px;
     color: var(--muted);
   }
-  .header-meta a {
-    text-decoration: none;
-    border-bottom: 1px solid rgba(154, 164, 178, 0.35);
-    transition: color 0.15s ease, border-color 0.15s ease;
+  .meta-loc { color: var(--muted); }
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
   }
-  .header-meta a:hover, .header-meta a:focus-visible {
-    color: var(--cyan);
-    border-bottom-color: var(--cyan);
+  /* contact links as pills with a flowing gradient border */
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 13px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--text);
+    text-decoration: none;
+    border: 1px solid transparent;
+    background:
+      linear-gradient(rgba(13, 17, 23, 0.6), rgba(13, 17, 23, 0.6)) padding-box,
+      linear-gradient(90deg, #3fdd9a, #58c8f5, #c58af9, #3fdd9a) border-box;
+    background-size: 100% 100%, 220% 100%;
+    animation: gradientFlow 6s linear infinite;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+  }
+  .contact-link:hover, .contact-link:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(88, 200, 245, 0.28);
+    outline: none;
+  }
+  /* cursor-follow spotlight (desktop pointers only, set via JS) */
+  #spotlight {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(340px circle at var(--mx, 50%) var(--my, -200%),
+      rgba(88, 200, 245, 0.07), transparent 72%);
   }
   .header-synced {
     font-size: 13px;
@@ -264,8 +293,10 @@
     margin-bottom: 16px;
   }
   .tile {
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: rgba(18, 23, 31, 0.66);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 12px;
     padding: 16px 12px;
     text-align: center;
@@ -291,8 +322,10 @@
 
   /* ---- shared panel ---- */
   .panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: rgba(18, 23, 31, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 14px;
     padding: 22px 24px;
     margin-bottom: 16px;
@@ -1219,16 +1252,18 @@
     header.appendChild(el("h1", "header-title", PROFILE.name || "Kamonsakgo"));
     if (PROFILE.role) header.appendChild(el("div", "header-subtitle", PROFILE.role));
     var meta = el("div", "header-meta");
-    if (PROFILE.location) meta.appendChild(el("span", "", PROFILE.location));
+    if (PROFILE.location) meta.appendChild(el("div", "meta-loc", PROFILE.location));
+    var contact = el("div", "contact");
     (PROFILE.links || []).forEach(function (l) {
-      var a = el("a", "", l.label);
+      var a = el("a", "contact-link", l.label);
       a.href = l.url;
       if (l.url.indexOf("mailto:") !== 0) {
         a.target = "_blank";
         a.rel = "noopener";
       }
-      meta.appendChild(a);
+      contact.appendChild(a);
     });
+    meta.appendChild(contact);
     header.appendChild(meta);
 
     // ---- two columns: identity rail on the left, the substance on the right ----
@@ -1355,6 +1390,27 @@
     });
 
     document.body.insertBefore(space, document.body.firstChild);
+
+    // cursor-follow spotlight — desktop pointers only
+    if (window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      var spot = el("div");
+      spot.id = "spotlight";
+      space.appendChild(spot);
+      // rAF-throttle: the spotlight sits behind the frosted panels, so each move
+      // forces a backdrop re-blur — coalesce to at most one update per frame.
+      var px = 0, py = 0, queued = false;
+      window.addEventListener("pointermove", function (e) {
+        px = e.clientX; py = e.clientY;
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(function () {
+          queued = false;
+          spot.style.setProperty("--mx", px + "px");
+          spot.style.setProperty("--my", py + "px");
+        });
+      }, { passive: true });
+    }
+
     return { space: space, layers: layers };
   }
 
