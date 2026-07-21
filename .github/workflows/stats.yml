@@ -9,6 +9,8 @@ on:
       - main
     paths:
       - scripts/gen_stats.py
+      - scripts/stats_data.py
+      - web/index.html
       - .github/workflows/stats.yml
 
 permissions:
