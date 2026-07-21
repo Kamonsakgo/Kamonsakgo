@@ -11,6 +11,7 @@ on:
       - scripts/gen_stats.py
       - scripts/stats_data.py
       - web/index.html
+      - web/avatar.png
       - .github/workflows/stats.yml
 
 permissions:

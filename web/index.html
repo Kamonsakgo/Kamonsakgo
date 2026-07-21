@@ -97,7 +97,8 @@
     opacity: 0;
   }
   @media (prefers-reduced-motion: reduce) {
-    .star-layer, .nebula.n-float { animation: none !important; }
+    .star-layer, .nebula.n-float,
+    .header::before, .avatar-wrap::before, .header-title { animation: none !important; }
   }
 
   /* ---- two-column shell: profile rail + main column ---- */
@@ -157,9 +158,57 @@
 
   /* ---- header ---- */
   .header {
+    position: relative;
     padding: 0 4px 22px;
     margin-bottom: 16px;
     border-bottom: 1px solid var(--border);
+  }
+  /* aurora glow drifting behind the name */
+  .header::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -34px;
+    left: -46px;
+    width: 280px;
+    height: 210px;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(63, 221, 154, 0.20), transparent 60%),
+      radial-gradient(circle at 72% 62%, rgba(197, 138, 249, 0.18), transparent 62%);
+    filter: blur(32px);
+    pointer-events: none;
+    animation: auroraPulse 9s ease-in-out infinite;
+  }
+  @keyframes auroraPulse {
+    0%, 100% { opacity: 0.7; transform: translate(0, 0) scale(1); }
+    50% { opacity: 1; transform: translate(12px, -8px) scale(1.08); }
+  }
+  /* profile photo with a spinning gradient ring */
+  .avatar-wrap {
+    position: relative;
+    width: 104px;
+    height: 104px;
+    margin-bottom: 20px;
+  }
+  .avatar-wrap::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #3fdd9a, #58c8f5, #c58af9, #3fdd9a);
+    animation: ringspin 6s linear infinite;
+  }
+  @keyframes ringspin { to { transform: rotate(360deg); } }
+  .avatar {
+    position: relative;
+    z-index: 1;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 22px rgba(88, 200, 245, 0.30);
   }
   .header-title {
     font-size: 27px;
@@ -167,7 +216,16 @@
     line-height: 1.3;
     letter-spacing: -0.3px;
     text-wrap: balance;
+    /* flowing gradient across the name */
+    background: linear-gradient(90deg, #6ff0b8, #58c8f5, #c58af9, #6ff0b8);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 7s linear infinite;
   }
+  @keyframes gradientFlow { to { background-position: 220% center; } }
   .header-subtitle {
     margin-top: 6px;
     font-size: 16px;
@@ -613,6 +671,7 @@
   var PROFILE = {
     draft: false,
 
+    avatar: "avatar.png",
     name: "กมลศักดิ์ บรรพตะธิ",
     role: "Full-Stack Developer",
     location: "กรุงเทพฯ, ประเทศไทย",
@@ -1072,6 +1131,18 @@
 
     // 1. header
     var header = el("div", "header section");
+    if (PROFILE.avatar) {
+      var aw = el("div", "avatar-wrap");
+      var img = el("img", "avatar");
+      img.src = PROFILE.avatar;
+      img.alt = PROFILE.name || "";
+      img.width = 104;
+      img.height = 104;
+      img.loading = "eager";
+      img.onerror = function () { aw.style.display = "none"; };
+      aw.appendChild(img);
+      header.appendChild(aw);
+    }
     header.appendChild(el("h1", "header-title", PROFILE.name || "Kamonsakgo"));
     if (PROFILE.role) header.appendChild(el("div", "header-subtitle", PROFILE.role));
     var meta = el("div", "header-meta");

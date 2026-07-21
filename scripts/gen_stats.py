@@ -279,5 +279,14 @@ with open(os.path.join(HERE, "..", "web", "index.html")) as f:
 with open("out/index.html", "w") as f:
     f.write(page)
 
+# static assets the page references, copied verbatim into the publish dir
+for asset in ("avatar.png",):
+    src = os.path.join(HERE, "..", "web", asset)
+    if os.path.exists(src):
+        with open(src, "rb") as f:
+            data = f.read()
+        with open(os.path.join("out", asset), "wb") as f:
+            f.write(data)
+
 print(f"total={total} days={len(days)} prs={prs_merged} repos={touched} "
       f"langs={[(k, round(p, 1)) for k, p in lang_rows]}")
