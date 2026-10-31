@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:,">
+<title>กมลศักดิ์ บรรพตะธิ — Full-Stack Developer</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #11161d;
+    --border: #262d36;
+    --muted: #9aa4b2;
+    --text: #e6edf3;
+    --green: #3fdd9a;
+    --cyan: #58c8f5;
+    --purple: #c58af9;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans Thai",
+      "Sarabun", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg);
+    overflow-x: hidden;
+  }
+
+  body {
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  a { color: inherit; }
+
+  #app {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 48px 24px 64px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---- space backdrop (behind everything, never intercepts clicks) ---- */
+  #space {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background:
+      radial-gradient(1200px 620px at 80% -10%, rgba(88, 200, 245, 0.10), transparent 60%),
+      radial-gradient(1000px 720px at 6% 110%, rgba(197, 138, 249, 0.10), transparent 60%);
+  }
+  .star-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    background: transparent;
+    will-change: transform, opacity;
+  }
+  .star-layer.s1 { animation: twinkle 5s ease-in-out infinite; }
+  .star-layer.s2 { animation: twinkle 7s ease-in-out infinite 1s; }
+  .star-layer.s3 { animation: twinkle 9s ease-in-out infinite 2s; }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.9; }
+  }
+  .nebula {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.15;
+    mix-blend-mode: screen;
+  }
+  .nebula.n-float { animation: nebfloat 22s ease-in-out infinite, blobmorph 18s ease-in-out infinite; }
+  @keyframes nebfloat {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(34px, -26px); }
+  }
+  @keyframes blobmorph {
+    0%, 100% { border-radius: 42% 58% 55% 45% / 48% 42% 58% 52%; }
+    50% { border-radius: 58% 42% 45% 55% / 55% 58% 42% 45%; }
+  }
+  .shooting {
+    position: absolute;
+    width: 130px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, transparent, #dff0ff);
+    box-shadow: 0 0 6px rgba(207, 232, 255, 0.8);
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .star-layer, .nebula.n-float,
+    .header::before, .avatar-wrap::before, .header-title, .contact-link { animation: none !important; }
+  }
+
+  /* ---- two-column shell: profile rail + main column ---- */
+  .layout {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 30px;
+    align-items: start;
+  }
+  .side {
+    position: sticky;
+    top: 28px;
+  }
+  @media (max-width: 900px) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+    .side { position: static; }
+  }
+
+  .muted { color: var(--muted); }
+
+  .loading, .error {
+    color: var(--muted);
+    padding: 60px 0;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  /* ---- entrance stagger ---- */
+  .section {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: fadeInUp 0.5s ease forwards;
+  }
+  .section:nth-of-type(1) { animation-delay: 0s; }
+  .section:nth-of-type(2) { animation-delay: 0.08s; }
+  .section:nth-of-type(3) { animation-delay: 0.16s; }
+  .section:nth-of-type(4) { animation-delay: 0.24s; }
+  .section:nth-of-type(5) { animation-delay: 0.32s; }
+  .section:nth-of-type(6) { animation-delay: 0.4s; }
+  .section:nth-of-type(7) { animation-delay: 0.48s; }
+  @keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .section { animation: none; opacity: 1; transform: none; }
+  }
+  /* When the Motion library loads, it owns every entrance — silence the CSS one. */
+  .has-motion .section {
+    animation: none;
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .has-motion .bar { transform-origin: bottom; }
+
+  /* ---- header ---- */
+  .header {
+    position: relative;
+    padding: 0 4px 22px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  /* aurora glow drifting behind the name */
+  .header::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -34px;
+    left: -46px;
+    width: 280px;
+    height: 210px;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(63, 221, 154, 0.20), transparent 60%),
+      radial-gradient(circle at 72% 62%, rgba(197, 138, 249, 0.18), transparent 62%);
+    filter: blur(32px);
+    pointer-events: none;
+    animation: auroraPulse 9s ease-in-out infinite;
+  }
+  @keyframes auroraPulse {
+    0%, 100% { opacity: 0.7; transform: translate(0, 0) scale(1); }
+    50% { opacity: 1; transform: translate(12px, -8px) scale(1.08); }
+  }
+  /* profile photo with a spinning gradient ring */
+  .avatar-wrap {
+    position: relative;
+    width: 104px;
+    height: 104px;
+    margin-bottom: 20px;
+  }
+  .avatar-wrap::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #3fdd9a, #58c8f5, #c58af9, #3fdd9a);
+    animation: ringspin 6s linear infinite;
+  }
+  @keyframes ringspin { to { transform: rotate(360deg); } }
+  .avatar {
+    position: relative;
+    z-index: 1;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 22px rgba(88, 200, 245, 0.30);
+  }
+  .header-title {
+    font-size: 27px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+    text-wrap: balance;
+    /* flowing gradient across the name */
+    background: linear-gradient(90deg, #6ff0b8, #58c8f5, #c58af9, #6ff0b8);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 7s linear infinite;
+  }
+  @keyframes gradientFlow { to { background-position: 220% center; } }
+  .header-subtitle {
+    margin-top: 6px;
+    font-size: 16px;
+    color: var(--green);
+    font-weight: 500;
+  }
+  .header-meta {
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .meta-loc { color: var(--muted); }
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  /* contact links as pills with a flowing gradient border */
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 13px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--text);
+    text-decoration: none;
+    border: 1px solid transparent;
+    background:
+      linear-gradient(rgba(13, 17, 23, 0.6), rgba(13, 17, 23, 0.6)) padding-box,
+      linear-gradient(90deg, #3fdd9a, #58c8f5, #c58af9, #3fdd9a) border-box;
+    background-size: 100% 100%, 220% 100%;
+    animation: gradientFlow 6s linear infinite;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+  }
+  .contact-link:hover, .contact-link:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(88, 200, 245, 0.28);
+    outline: none;
+  }
+  /* cursor-follow spotlight (desktop pointers only, set via JS) */
+  #spotlight {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(340px circle at var(--mx, 50%) var(--my, -200%),
+      rgba(88, 200, 245, 0.07), transparent 72%);
+  }
+  .header-synced {
+    font-size: 13px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- tiles ---- */
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .tile {
+    background: rgba(18, 23, 31, 0.66);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    padding: 16px 12px;
+    text-align: center;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .tile:hover {
+    border-color: var(--muted);
+    box-shadow: 0 0 0 1px rgba(63, 221, 154, 0.12);
+  }
+  .tile-value {
+    font-size: 28px;
+    font-weight: 700;
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+  .tile-label {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.2px;
+  }
+
+  /* ---- shared panel ---- */
+  .panel {
+    background: rgba(18, 23, 31, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 16px;
+  }
+  .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+  .panel-title::before {
+    content: "";
+    width: 4px;
+    height: 15px;
+    border-radius: 2px;
+    background: linear-gradient(var(--green), var(--cyan));
+    flex: 0 0 auto;
+  }
+
+  /* ---- heatmap ---- */
+  .heatmap-scroll {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .heatmap-inner {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .heatmap-months {
+    display: flex;
+    gap: 2px;
+  }
+  .heatmap-month-label {
+    width: 11px;
+    flex: 0 0 11px;
+    font-size: 9px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: visible;
+  }
+  .heatmap-grid {
+    display: flex;
+    gap: 2px;
+  }
+  .heatmap-col {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .heatmap-cell {
+    width: 11px;
+    height: 11px;
+    border-radius: 2px;
+    background: #161b22;
+    transition: opacity 0.25s ease, box-shadow 0.15s ease;
+  }
+  .heatmap-cell.empty {
+    background: transparent;
+  }
+  .heatmap-cell[data-date] {
+    cursor: pointer;
+  }
+  .heatmap-cell[data-date]:hover,
+  .heatmap-cell[data-date]:focus-visible {
+    box-shadow: 0 0 0 1px var(--cyan);
+    outline: none;
+  }
+  .heatmap-cell.dim {
+    opacity: 0.25;
+  }
+
+  .tooltip {
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translate(-50%, calc(-100% - 10px));
+    background: #161b22;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    color: var(--text);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 1000;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+  .tooltip.visible {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 14px));
+  }
+
+  /* ---- monthly bars ---- */
+  .bars-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+    height: 150px;
+  }
+  .bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 1 0;
+    height: 100%;
+    justify-content: flex-end;
+  }
+  .bar-count {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .bar {
+    width: 100%;
+    max-width: 36px;
+    min-height: 2px;
+    border: 1px solid transparent;
+    border-radius: 4px 4px 2px 2px;
+    background: linear-gradient(to bottom, #006d5b, #00ff9f);
+    cursor: pointer;
+    padding: 0;
+    display: block;
+    transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .bar:hover {
+    box-shadow: 0 0 8px rgba(0, 255, 159, 0.5);
+  }
+  .bar:active {
+    transform: scale(0.96);
+  }
+  .bar.active {
+    border-color: var(--cyan);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+  }
+  .bar-label {
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* ---- languages ---- */
+  .lang-bar {
+    display: flex;
+    width: 100%;
+    height: 14px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .lang-seg {
+    height: 100%;
+  }
+  .lang-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-top: 16px;
+  }
+  .lang-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 14px;
+  }
+  .lang-name { flex: 1; }
+  .lang-pct {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .lang-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    margin-top: 16px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+  }
+  .legend-swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 3px;
+    margin-right: 8px;
+    flex: 0 0 9px;
+  }
+  .legend-name {
+    white-space: pre;
+  }
+
+  /* ---- footer ---- */
+  .footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    padding-top: 8px;
+  }
+  .footer a {
+    color: var(--cyan);
+    text-decoration: none;
+  }
+  .footer a:hover, .footer a:focus-visible {
+    text-decoration: underline;
+  }
+
+  /* ---- group headings ---- */
+  .group {
+    margin: 44px 0 18px;
+  }
+  .group:first-of-type { margin-top: 34px; }
+  .group-name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+  .group-note {
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* ---- skills ---- */
+  .skill-row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 9px 0;
+    border-top: 1px solid #21262d;
+    flex-wrap: wrap;
+  }
+  .skill-row:first-of-type { border-top: 0; padding-top: 2px; }
+  .skill-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 14px;
+    flex: 0 0 120px;
+  }
+  .skill-label::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    color: var(--dot, var(--green));
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
+  }
+  .skill-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+    min-width: 180px;
+  }
+  .chip {
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 4px 11px;
+    font-size: 14px;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.02);
+    cursor: default;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+  .chip:hover {
+    border-color: var(--cyan);
+    background: rgba(88, 200, 245, 0.07);
+    box-shadow: 0 0 12px rgba(88, 200, 245, 0.22);
+  }
+
+  /* ---- profile: about / experience / education ---- */
+  .draft-note {
+    border: 1px dashed #ffbd2e;
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: #ffbd2e;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .about {
+    position: relative;
+    padding-left: 16px;
+  }
+  .about::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 2px;
+    bottom: 2px;
+    width: 3px;
+    border-radius: 3px;
+    background: linear-gradient(var(--green), var(--cyan), var(--purple));
+  }
+  .about-text {
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.8;
+    max-width: 62ch;
+    text-wrap: pretty;
+  }
+  .about-text + .about-text { margin-top: 14px; }
+  .cv-item {
+    position: relative;
+    padding: 2px 0 22px 26px;
+  }
+  /* the timeline rail */
+  .cv-item::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(88, 200, 245, 0.25);
+  }
+  .cv-item:first-of-type::before { top: 9px; }
+  .cv-item:last-of-type::before { bottom: auto; height: 9px; }
+  /* the glowing node */
+  .cv-item::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 3px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--cyan);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 10px rgba(88, 200, 245, 0.85);
+  }
+  .cv-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .cv-role {
+    color: var(--text);
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .cv-where {
+    color: var(--cyan);
+    font-weight: 500;
+  }
+  .cv-period {
+    color: var(--muted);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .cv-points {
+    margin: 10px 0 0;
+    padding-left: 20px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.75;
+    max-width: 66ch;
+    text-wrap: pretty;
+  }
+  .cv-points li { margin-top: 6px; }
+
+  /* ---- responsive ---- */
+  @media (max-width: 640px) {
+    #app { padding: 20px 14px 32px; }
+    .about-text { font-size: 13px; }
+    .cv-role { font-size: 13px; }
+    .cv-points { font-size: 12px; }
+    .group { margin: 26px 0 14px; gap: 10px; }
+    .group-name { font-size: 12px; letter-spacing: 3px; }
+    .skill-label { flex-basis: 100%; }
+    .chip { font-size: 11px; }
+    .header-title { font-size: 18px; }
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+    .tile-value { font-size: 22px; }
+    .tile-label { font-size: 9px; letter-spacing: 1.5px; }
+    .panel { padding: 14px; }
+    .bars-row { height: 110px; gap: 3px; }
+    .bar { max-width: 22px; }
+    .bar-count { font-size: 8px; }
+    .bar-label { font-size: 8px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="loading">กำลังโหลด…</div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ===========================================================================
+  //  PROFILE — edit this block only. Everything below it is layout code.
+  //
+  //  While `draft` is true the page shows a visible "placeholder" notice, so
+  //  nothing here can be mistaken for a real CV. Set it to false once every
+  //  field holds real content.
+  // ===========================================================================
+  var PROFILE = {
+    draft: false,
+
+    avatar: "avatar.png",
+    name: "กมลศักดิ์ บรรพตะธิ",
+    role: "Full-Stack Developer",
+    location: "กรุงเทพฯ, ประเทศไทย",
+    links: [
+      { label: "kamonsak.go@gmail.com", url: "mailto:kamonsak.go@gmail.com" },
+      { label: "github.com/Kamonsakgo", url: "https://github.com/Kamonsakgo" },
+      { label: "LinkedIn", url: "https://www.linkedin.com/in/kamonsak-banpatathi" }
+    ],
+
+    // One or two short paragraphs, first person. Who you are, what you build.
+    about: [
+      "กมลศักดิ์ (โก้) — Full-Stack Developer อยู่กรุงเทพฯ ทำงานฝั่ง back-end เป็นหลัก " +
+        "กับระบบที่แตกเป็นหลาย service และต้องคุยกับระบบภายนอกเยอะ ถนัด PHP/Laravel, " +
+        "Go, Python และขึ้นหน้าเว็บด้วย Vue/TypeScript ได้",
+      "สนใจงานที่ได้ไล่ปัญหาจริงบน production ตั้งแต่ต้นทางจนจบ — หา root cause ให้เจอ " +
+        "ไม่ใช่แค่ปิดอาการ"
+    ],
+
+    // Newest first.
+    experience: [
+      {
+        role: "Full-Stack Developer",
+        where: "บริษัทพัฒนาซอฟต์แวร์เอกชน",
+        period: "ส.ค. 2568 – ปัจจุบัน",
+        points: [
+          "พัฒนาและดูแลระบบแบบ microservices ฝั่ง back-end ด้วย PHP/Laravel พร้อมหน้าเว็บฝั่ง front-end ด้วย Vue/TypeScript",
+          "ออกแบบและทำ API integration เชื่อมต่อกับระบบภายนอก ทั้งฝั่งรับและฝั่งส่ง callback พร้อมระบบตรวจสอบ signature ความปลอดภัย",
+          "ดูแลระบบประมวลผลธุรกรรมและระบบสรุปรายงาน เน้นความถูกต้องของข้อมูลและการกระทบยอด (reconciliation)",
+          "วิเคราะห์และแก้ปัญหาบน production — ไล่หา root cause จาก log และฐานข้อมูลจริง"
+        ]
+      },
+      {
+        role: "Back-end Developer (Go)",
+        where: "บริษัท ไอบอทน้อย จำกัด",
+        period: "พ.ย. 2567 – มี.ค. 2568",
+        points: [
+          "พัฒนาแอปพลิเคชันด้วย Go — ระบบ Blog แบบ CRUD และระบบสร้างเสียงจากข้อความ",
+          "ปรับปรุงระบบเดิมตามความต้องการของฝั่ง front-end และทำเอกสาร API ด้วย Swagger",
+          "ใช้ MongoDB และ S3 เป็นที่เก็บข้อมูล ทำงานร่วมกับทีมผ่าน GitHub"
+        ]
+      },
+      {
+        role: "Full-Stack Developer — โปรเจคจบ",
+        where: "มหาวิทยาลัยอุบลราชธานี",
+        period: "เม.ย. 2566 – ต.ค. 2567",
+        points: [
+          "ระบบนัดสัมภาษณ์ออนไลน์ด้วย Django และ MySQL รองรับ 4 บทบาท: ผู้ดูแลระบบ ผู้จัดการ ผู้สัมภาษณ์ และนักศึกษา",
+          "Deploy บน DigitalOcean และถูกใช้งานจริงในการสัมภาษณ์ TCAS รอบ 1 ของหลักสูตร Data Science and Software Innovation"
+        ]
+      }
+    ],
+
+    // Grouped by category. Each row is [label, [items…]].
+    skills: [
+      ["Languages", ["Go", "PHP", "Python", "TypeScript", "JavaScript"]],
+      ["Back-end", ["Laravel", "Django", "Gin", "Fiber", "REST API", "Microservices"]],
+      ["Front-end", ["Vue", "Nuxt"]],
+      ["Data", ["MySQL", "MongoDB"]],
+      ["Cloud & Ops", ["AWS", "S3", "Docker", "DigitalOcean", "Linux"]],
+      ["Tools", ["Git", "GitHub Actions", "Swagger", "Postman"]]
+    ],
+
+    // Newest first.
+    education: [
+      {
+        role: "วิทยาศาสตรบัณฑิต — วิทยาการข้อมูลและนวัตกรรมซอฟต์แวร์",
+        where: "มหาวิทยาลัยอุบลราชธานี คณะวิทยาศาสตร์",
+        period: "จบปี 2567",
+        points: ["เกียรตินิยมอันดับ 1 · เกรดเฉลี่ย 3.60"]
+      }
+    ]
+  };
+
+  var app = document.getElementById("app");
+  var PALETTE = ["#00ff9f", "#00e5ff", "#bd00ff", "#3fb950", "#ffbd2e", "#8b949e"];
+  var BUCKET_COLORS = ["#161b22", "#0e4429", "#006d32", "#26a641", "#00ff9f"];
+  var MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  function fmt(n) {
+    return Number(n).toLocaleString("en-US");
+  }
+
+  function plural(n, noun) {
+    return fmt(n) + " " + noun + (n === 1 ? "" : "s");
+  }
+
+  function el(tag, className, text) {
+    var e = document.createElement(tag);
+    if (className) e.className = className;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+
+  function parseISODate(s) {
+    // s is "YYYY-MM-DD" — parse as UTC midnight to avoid local-timezone drift
+    return new Date(s + "T00:00:00Z");
+  }
+
+  function renderError() {
+    app.innerHTML = "";
+    var msg = el("div", "error", "โหลดข้อมูลไม่สำเร็จ — ลองใหม่อีกครั้ง");
+    msg.style.color = "#8b949e";
+    app.appendChild(msg);
+  }
+
+  // ---- tooltip -------------------------------------------------------------
+  var tooltip = el("div", "tooltip");
+  document.body.appendChild(tooltip);
+
+  function showTooltip(cell) {
+    var date = cell.getAttribute("data-date");
+    var count = Number(cell.getAttribute("data-count"));
+    var d = parseISODate(date);
+    var label = d.getUTCDate() + " " + MONTH_ABBR[d.getUTCMonth()] + " " + d.getUTCFullYear();
+    var countText = count === 0 ? "no commits" : (count === 1 ? "1 commit" : fmt(count) + " commits");
+    tooltip.textContent = label + " · " + countText;
+    var r = cell.getBoundingClientRect();
+    tooltip.style.left = (r.left + r.width / 2) + "px";
+    tooltip.style.top = r.top + "px";
+    tooltip.classList.add("visible");
+  }
+
+  function hideTooltip() {
+    tooltip.classList.remove("visible");
+  }
+
+  // ---- heatmap ---------------------------------------------------------------
+  function buildHeatmap(daily) {
+    var dates = Object.keys(daily).sort();
+    var max = 1;
+    dates.forEach(function (d) { if (daily[d] > max) max = daily[d]; });
+
+    var columns = [];
+    if (dates.length) {
+      // Each cell's row/col is derived from its own date, not its position in
+      // the array — a missing day upstream then leaves a hole in the grid
+      // instead of shifting every later cell onto the wrong weekday row.
+      var firstDate = parseISODate(dates[0]);
+      var firstWeekday = firstDate.getUTCDay();
+      // UTC-midnight timestamp of the Sunday on/before the first date — the
+      // column-0/row-0 anchor for week-offset math.
+      var weekAnchorMs = firstDate.getTime() - firstWeekday * 86400000;
+
+      var maxCol = 0;
+      var placements = dates.map(function (date) {
+        var d = parseISODate(date);
+        var row = d.getUTCDay();
+        var col = Math.floor((d.getTime() - weekAnchorMs) / 86400000 / 7);
+        if (col > maxCol) maxCol = col;
+        return { date: date, row: row, col: col };
+      });
+
+      var numCols = maxCol + 1;
+      for (var c = 0; c < numCols; c++) columns.push(new Array(7).fill(null));
+      placements.forEach(function (p) {
+        columns[p.col][p.row] = { date: p.date, count: daily[p.date] };
+      });
+    } else {
+      columns.push(new Array(7).fill(null));
+    }
+
+    function bucket(count) {
+      if (!count) return 0;
+      var r = count / max;
+      if (r <= 0.25) return 1;
+      if (r <= 0.5) return 2;
+      if (r <= 0.75) return 3;
+      return 4;
+    }
+
+    var wrap = el("div", "heatmap-scroll");
+    var inner = el("div", "heatmap-inner");
+
+    var monthsRow = el("div", "heatmap-months");
+    var gridRow = el("div", "heatmap-grid");
+
+    var lastLabeledMonth = null;
+    columns.forEach(function (col) {
+      var firstCell = col.filter(Boolean)[0];
+      var labelText = "";
+      if (firstCell) {
+        var monthKey = firstCell.date.slice(0, 7);
+        if (monthKey !== lastLabeledMonth) {
+          labelText = MONTH_ABBR[parseISODate(firstCell.date).getUTCMonth()];
+          lastLabeledMonth = monthKey;
+        }
+      }
+      monthsRow.appendChild(el("div", "heatmap-month-label", labelText));
+
+      var colEl = el("div", "heatmap-col");
+      col.forEach(function (cellData) {
+        if (!cellData) {
+          colEl.appendChild(el("div", "heatmap-cell empty"));
+          return;
+        }
+        var cellEl = el("div", "heatmap-cell");
+        cellEl.style.background = BUCKET_COLORS[bucket(cellData.count)];
+        cellEl.setAttribute("data-date", cellData.date);
+        cellEl.setAttribute("data-count", cellData.count);
+        cellEl.setAttribute("data-month", cellData.date.slice(0, 7));
+        cellEl.setAttribute("tabindex", "0");
+        colEl.appendChild(cellEl);
+      });
+      gridRow.appendChild(colEl);
+    });
+
+    inner.appendChild(monthsRow);
+    inner.appendChild(gridRow);
+    wrap.appendChild(inner);
+
+    wrap.addEventListener("mouseover", function (e) {
+      var cell = e.target.closest && e.target.closest(".heatmap-cell[data-date]");
+      if (cell) showTooltip(cell);
+    });
+    wrap.addEventListener("mouseout", function (e) {
+      var cell = e.target.closest && e.target.closest(".heatmap-cell[data-date]");
+      if (cell) hideTooltip();
+    });
+    wrap.addEventListener("focusin", function (e) {
+      var cell = e.target.closest && e.target.closest(".heatmap-cell[data-date]");
+      if (cell) showTooltip(cell);
+    });
+    wrap.addEventListener("focusout", function (e) {
+      var cell = e.target.closest && e.target.closest(".heatmap-cell[data-date]");
+      if (cell) hideTooltip();
+    });
+
+    return { el: wrap, scrollEl: wrap };
+  }
+
+  document.addEventListener("click", function (e) {
+    var cell = e.target.closest && e.target.closest(".heatmap-cell[data-date]");
+    if (cell) {
+      showTooltip(cell);
+    } else if (!e.target.closest || !e.target.closest(".tooltip")) {
+      hideTooltip();
+    }
+  });
+
+  // ---- monthly bars ------------------------------------------------------
+  function buildBars(months, heatmapScrollEl) {
+    var panel = el("div", "panel section");
+    panel.appendChild(el("div", "panel-title", "Commit ต่อเดือน (12 เดือนล่าสุด)"));
+    var row = el("div", "bars-row");
+
+    var max = 1;
+    months.forEach(function (m) { if (m.commits > max) max = m.commits; });
+
+    var activeBar = null;
+    var activeKey = null;
+
+    var barEls = [];
+    months.forEach(function (m) {
+      var item = el("div", "bar-item");
+      item.appendChild(el("div", "bar-count", fmt(m.commits)));
+
+      var bar = el("button", "bar");
+      bar.type = "button";
+      bar.setAttribute("aria-label", m.label + ": " + plural(m.commits, "commit"));
+      var h = m.commits > 0 ? Math.max(Math.round((m.commits / max) * 100), 4) : 2;
+      bar.style.height = h + "%";
+
+      bar.addEventListener("click", function () {
+        var cells = heatmapScrollEl.querySelectorAll(".heatmap-cell[data-month]");
+        if (activeKey === m.key) {
+          // clear filter
+          cells.forEach(function (c) { c.classList.remove("dim"); });
+          if (activeBar) activeBar.classList.remove("active");
+          activeBar = null;
+          activeKey = null;
+          return;
+        }
+        if (activeBar) activeBar.classList.remove("active");
+        cells.forEach(function (c) {
+          if (c.getAttribute("data-month") === m.key) {
+            c.classList.remove("dim");
+          } else {
+            c.classList.add("dim");
+          }
+        });
+        bar.classList.add("active");
+        activeBar = bar;
+        activeKey = m.key;
+
+        var firstMatch = heatmapScrollEl.querySelector('.heatmap-cell[data-month="' + m.key + '"]');
+        if (firstMatch) {
+          var contRect = heatmapScrollEl.getBoundingClientRect();
+          var cellRect = firstMatch.getBoundingClientRect();
+          var delta = (cellRect.left - contRect.left) - (heatmapScrollEl.clientWidth / 2) + (cellRect.width / 2);
+          heatmapScrollEl.scrollTo({ left: heatmapScrollEl.scrollLeft + delta, behavior: "smooth" });
+        }
+      });
+
+      item.appendChild(bar);
+      item.appendChild(el("div", "bar-label", m.label));
+      row.appendChild(item);
+      barEls.push(bar);
+    });
+
+    panel.appendChild(row);
+    return panel;
+  }
+
+  // ---- languages -----------------------------------------------------------
+  function buildLanguages(languages) {
+    var panel = el("div", "panel section");
+    panel.appendChild(el("div", "panel-title", "ภาษาที่ใช้"));
+
+    if (!languages || !languages.length) {
+      panel.appendChild(el("div", "muted", "no language data"));
+      return panel;
+    }
+
+    var bar = el("div", "lang-bar");
+    var list = el("div", "lang-list");
+
+    languages.forEach(function (lang, i) {
+      var color = PALETTE[i % PALETTE.length];
+      var seg = el("div", "lang-seg");
+      seg.style.width = lang.pct + "%";
+      seg.style.background = color;
+      seg.setAttribute("data-w", lang.pct);
+      bar.appendChild(seg);
+
+      var row = el("div", "lang-row");
+      var swatch = el("span", "legend-swatch");
+      swatch.style.background = color;
+      row.appendChild(swatch);
+      row.appendChild(el("span", "lang-name", lang.name));
+      row.appendChild(el("span", "lang-pct", lang.pct + "%"));
+      list.appendChild(row);
+    });
+
+    panel.appendChild(bar);
+    panel.appendChild(list);
+    return panel;
+  }
+
+  // ---- repos -----------------------------------------------------------------
+  // ---- render ----------------------------------------------------------------
+  function buildAbout() {
+    var paras = (PROFILE.about || []).filter(Boolean);
+    if (!paras.length) return null;
+    var panel = el("div", "panel section");
+    panel.appendChild(el("div", "panel-title", "เกี่ยวกับผม"));
+    if (PROFILE.draft) {
+      panel.appendChild(el(
+        "div",
+        "draft-note",
+        "⚠ ส่วนประวัติยังเป็นโครง — ข้อความในวงเล็บเป็นตัวอย่าง ไม่ใช่ข้อมูลจริง"
+      ));
+    }
+    var body = el("div", "about");
+    paras.forEach(function (p) {
+      body.appendChild(el("div", "about-text", p));
+    });
+    panel.appendChild(body);
+    return panel;
+  }
+
+  function buildGroup(name, note) {
+    var g = el("div", "group section");
+    g.appendChild(el("h2", "group-name", name));
+    if (note) g.appendChild(el("div", "group-note", note));
+    return g;
+  }
+
+  function buildSkills() {
+    var rows = (PROFILE.skills || []).filter(function (r) {
+      return r && r[1] && r[1].length;
+    });
+    if (!rows.length) return null;
+    var panel = el("div", "panel section");
+    panel.appendChild(el("div", "panel-title", "ทักษะ"));
+    var dotColors = ["#3fdd9a", "#58c8f5", "#c58af9", "#3fb950", "#ffbd2e", "#ff6ac1"];
+    rows.forEach(function (row, i) {
+      var line = el("div", "skill-row");
+      line.style.setProperty("--dot", dotColors[i % dotColors.length]);
+      line.appendChild(el("div", "skill-label", row[0]));
+      var chips = el("div", "skill-chips");
+      row[1].forEach(function (s) {
+        chips.appendChild(el("span", "chip", s));
+      });
+      line.appendChild(chips);
+      panel.appendChild(line);
+    });
+    return panel;
+  }
+
+  function buildCV(title, items) {
+    var list = (items || []).filter(Boolean);
+    if (!list.length) return null;
+    var panel = el("div", "panel section");
+    panel.appendChild(el("div", "panel-title", title));
+    list.forEach(function (item) {
+      var wrap = el("div", "cv-item");
+      var head = el("div", "cv-head");
+      var role = el("div", "cv-role", item.role || "");
+      if (item.where) {
+        role.appendChild(document.createTextNode(" · "));
+        role.appendChild(el("span", "cv-where", item.where));
+      }
+      head.appendChild(role);
+      if (item.period) head.appendChild(el("div", "cv-period", item.period));
+      wrap.appendChild(head);
+      var points = (item.points || []).filter(Boolean);
+      if (points.length) {
+        var ul = el("ul", "cv-points");
+        points.forEach(function (p) {
+          ul.appendChild(el("li", "", p));
+        });
+        wrap.appendChild(ul);
+      }
+      panel.appendChild(wrap);
+    });
+    return panel;
+  }
+
+  function appendIf(node) {
+    if (node) app.appendChild(node);
+  }
+
+  function appendTo(parent, node) {
+    if (node) parent.appendChild(node);
+  }
+
+  function render(data) {
+    app.innerHTML = "";
+
+    // 1. header
+    var header = el("div", "header section");
+    if (PROFILE.avatar) {
+      var aw = el("div", "avatar-wrap");
+      var img = el("img", "avatar");
+      img.src = PROFILE.avatar;
+      img.alt = PROFILE.name || "";
+      img.width = 104;
+      img.height = 104;
+      img.loading = "eager";
+      img.onerror = function () { aw.style.display = "none"; };
+      aw.appendChild(img);
+      header.appendChild(aw);
+    }
+    header.appendChild(el("h1", "header-title", PROFILE.name || "Kamonsakgo"));
+    if (PROFILE.role) header.appendChild(el("div", "header-subtitle", PROFILE.role));
+    var meta = el("div", "header-meta");
+    if (PROFILE.location) meta.appendChild(el("div", "meta-loc", PROFILE.location));
+    var contact = el("div", "contact");
+    (PROFILE.links || []).forEach(function (l) {
+      var a = el("a", "contact-link", l.label);
+      a.href = l.url;
+      if (l.url.indexOf("mailto:") !== 0) {
+        a.target = "_blank";
+        a.rel = "noopener";
+      }
+      contact.appendChild(a);
+    });
+    meta.appendChild(contact);
+    header.appendChild(meta);
+
+    // ---- two columns: identity rail on the left, the substance on the right ----
+    var layout = el("div", "layout");
+    var side = el("aside", "side");
+    var main = el("div", "main");
+
+    side.appendChild(header);
+    appendTo(side, buildAbout());
+    appendTo(side, buildLanguages(data.languages || []));
+
+    appendTo(main, buildSkills());
+    appendTo(main, buildCV("ประสบการณ์ทำงาน", PROFILE.experience));
+    appendTo(main, buildCV("การศึกษา", PROFILE.education));
+
+    layout.appendChild(side);
+    layout.appendChild(main);
+    app.appendChild(layout);
+
+    // ---- full width below: what the commits say ----
+    var synced = (data.synced || "").slice(0, 10);
+    app.appendChild(buildGroup(
+      "สถิติการเขียนโค้ด",
+      "ตัวเลขรวมทั้งหมดตั้งแต่เริ่มใช้ GitHub (รวม repo ส่วนตัว) · กราฟด้านล่างคือ 1 ปีล่าสุด · อัปเดต " + synced
+    ));
+
+    // 2. tiles
+    var totals = data.totals || {};
+    var streak = data.streak || { current: 0, longest: 0 };
+    var tileDefs = [
+      { label: "COMMITS", n: totals.commits || 0, suffix: "", color: "#00ff9f" },
+      { label: "ACTIVE DAYS", n: totals.active_days || 0, suffix: "", color: "#00e5ff" },
+      { label: "PRS MERGED", n: totals.prs_merged || 0, suffix: "", color: "#bd00ff" },
+      { label: "REPOS TOUCHED", n: totals.repos_touched || 0, suffix: "", color: "#00ff9f" },
+      { label: "CURRENT STREAK", n: streak.current || 0, suffix: " d", color: "#00e5ff" },
+      { label: "LONGEST STREAK", n: streak.longest || 0, suffix: " d", color: "#bd00ff" }
+    ];
+    var tiles = el("div", "tiles section");
+    tileDefs.forEach(function (t) {
+      var tile = el("div", "tile");
+      var val = el("div", "tile-value", fmt(t.n) + t.suffix);
+      val.style.color = t.color;
+      // markers so Motion can count these up from zero when they scroll in
+      val.setAttribute("data-count", t.n);
+      val.setAttribute("data-suffix", t.suffix);
+      tile.appendChild(val);
+      tile.appendChild(el("div", "tile-label", t.label));
+      tiles.appendChild(tile);
+    });
+    app.appendChild(tiles);
+
+    // 3. heatmap
+    var heatmapPanel = el("div", "panel section");
+    heatmapPanel.appendChild(el("div", "panel-title", "ปฏิทินการ commit (1 ปีล่าสุด)"));
+    var heatmap = buildHeatmap(data.daily || {});
+    heatmapPanel.appendChild(heatmap.el);
+    app.appendChild(heatmapPanel);
+
+    // 4. monthly bars
+    var bars = buildBars(data.months || [], heatmap.scrollEl);
+    app.appendChild(bars);
+
+    // 5. footer
+    var footer = el("div", "footer section");
+    footer.appendChild(document.createTextNode("หน้านี้อัปเดตอัตโนมัติทุกคืนจากข้อมูล GitHub จริง · "));
+    var link = el("a", "", "github.com/Kamonsakgo");
+    link.href = "https://github.com/Kamonsakgo";
+    link.target = "_blank";
+    link.rel = "noopener";
+    footer.appendChild(link);
+    app.appendChild(footer);
+  }
+
+  // --------------------------------------------------------------------------
+  //  Space backdrop. The starfield and nebulae are pure CSS so they show even
+  //  without Motion; Motion (when present) adds parallax and shooting stars.
+  // --------------------------------------------------------------------------
+  function rnd(max) { return Math.floor(Math.random() * max); }
+
+  function starField(n, w, h) {
+    var out = [];
+    for (var i = 0; i < n; i++) {
+      var a = (0.5 + Math.random() * 0.5).toFixed(2);
+      out.push(rnd(w) + "px " + rnd(h) + "px rgba(255,255,255," + a + ")");
+    }
+    return out.join(",");
+  }
+
+  function buildSpace() {
+    var space = el("div");
+    space.id = "space";
+    space.setAttribute("aria-hidden", "true");
+
+    var W = 2200, H = 2800;
+    var layers = [];
+    [
+      { cls: "s1", n: 150, size: 1 },
+      { cls: "s2", n: 70, size: 2 },
+      { cls: "s3", n: 28, size: 2 }
+    ].forEach(function (d) {
+      var layer = el("div", "star-layer " + d.cls);
+      layer.style.width = d.size + "px";
+      layer.style.height = d.size + "px";
+      layer.style.boxShadow = starField(d.n, W, H);
+      space.appendChild(layer);
+      layers.push(layer);
+    });
+
+    [
+      { c: "rgba(63,221,154,0.55)", x: "72%", y: "10%", s: 340 },
+      { c: "rgba(88,200,245,0.55)", x: "8%", y: "52%", s: 300 },
+      { c: "rgba(197,138,249,0.55)", x: "86%", y: "82%", s: 280 }
+    ].forEach(function (nb) {
+      var n = el("div", "nebula n-float");
+      n.style.width = nb.s + "px";
+      n.style.height = nb.s + "px";
+      n.style.left = nb.x;
+      n.style.top = nb.y;
+      n.style.background = "radial-gradient(circle, " + nb.c + ", transparent 70%)";
+      space.appendChild(n);
+    });
+
+    document.body.insertBefore(space, document.body.firstChild);
+
+    // cursor-follow spotlight — desktop pointers only
+    if (window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      var spot = el("div");
+      spot.id = "spotlight";
+      space.appendChild(spot);
+      // rAF-throttle: the spotlight sits behind the frosted panels, so each move
+      // forces a backdrop re-blur — coalesce to at most one update per frame.
+      var px = 0, py = 0, queued = false;
+      window.addEventListener("pointermove", function (e) {
+        px = e.clientX; py = e.clientY;
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(function () {
+          queued = false;
+          spot.style.setProperty("--mx", px + "px");
+          spot.style.setProperty("--my", py + "px");
+        });
+      }, { passive: true });
+    }
+
+    return { space: space, layers: layers };
+  }
+
+  function animateSpace(m, refs) {
+    // parallax: deeper layers drift less as the page scrolls
+    var layers = refs.layers;
+    window.addEventListener("scroll", function () {
+      var y = window.scrollY;
+      for (var i = 0; i < layers.length; i++) {
+        layers[i].style.transform = "translateY(" + (-y * 0.03 * (i + 1)) + "px)";
+      }
+    }, { passive: true });
+
+    // shooting stars on a loose, self-scheduling interval
+    function shoot() {
+      var s = el("div", "shooting");
+      refs.space.appendChild(s);
+      s.style.left = rnd(Math.floor(window.innerWidth * 0.7)) + "px";
+      s.style.top = rnd(Math.floor(window.innerHeight * 0.5)) + "px";
+      m.animate(s, {
+        opacity: [0, 1, 0],
+        transform: [
+          "translate(0px,0px) rotate(32deg)",
+          "translate(340px,213px) rotate(32deg)"
+        ]
+      }, { duration: 1.2, ease: [0.16, 1, 0.3, 1] });
+      // clean up after the streak has played (this build's animate() has no
+      // reliable .finished promise, so time the removal instead)
+      setTimeout(function () { s.remove(); }, 1400);
+    }
+    function loop() {
+      shoot();
+      setTimeout(loop, 4000 + Math.random() * 5000);
+    }
+    setTimeout(loop, 1800);
+  }
+
+  var spaceRefs = buildSpace();
+
+  // --------------------------------------------------------------------------
+  //  Motion — optional enhancement loaded from CDN. If the import fails, times
+  //  out, or the visitor prefers reduced motion, the page keeps its CSS
+  //  animations and nothing here runs.
+  // --------------------------------------------------------------------------
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var motionReady = reduceMotion
+    ? Promise.resolve(null)
+    : Promise.race([
+        import("https://cdn.jsdelivr.net/npm/motion@11.13.5/+esm")
+          .catch(function () { return null; }),
+        new Promise(function (resolve) { setTimeout(function () { resolve(null); }, 1500); })
+      ]).then(function (m) {
+        return (m && typeof m.animate === "function") ? m : null;
+      });
+
+  // Bind hover/press through native pointer events + animate(), rather than
+  // Motion's hover()/press() helpers — those aren't exported in every build.
+  function onHover(sel, enter, leave) {
+    document.querySelectorAll(sel).forEach(function (elm) {
+      elm.addEventListener("pointerenter", function () { enter(elm); });
+      elm.addEventListener("pointerleave", function () { leave(elm); });
+    });
+  }
+  function onPress(sel, down, up) {
+    document.querySelectorAll(sel).forEach(function (elm) {
+      elm.addEventListener("pointerdown", function () { down(elm); });
+      var release = function () { up(elm); };
+      elm.addEventListener("pointerup", release);
+      elm.addEventListener("pointerleave", release);
+    });
+  }
+
+  function applyMotion(m) {
+    var animate = m.animate, inView = m.inView;
+    var easeOut = [0.16, 1, 0.3, 1];
+
+    // 1. every section eases up into place as it scrolls into view
+    function reveal(elm) {
+      if (elm.__revealed) return;
+      elm.__revealed = true;
+      animate(elm,
+        { opacity: [0, 1], transform: ["translateY(16px)", "translateY(0px)"] },
+        { duration: 0.55, ease: easeOut });
+    }
+    var secs = document.querySelectorAll(".section");
+    secs.forEach(function (sec) {
+      inView(sec, function (elm) { reveal(elm); }, { amount: 0.12 });
+    });
+    // Safety net: a fast/jump/restored scroll can skip inView for sections it
+    // flies past, leaving them stuck hidden. Reveal anything already reached.
+    function sweep() {
+      var vb = window.innerHeight;
+      secs.forEach(function (sec) {
+        if (!sec.__revealed && sec.getBoundingClientRect().top < vb) reveal(sec);
+      });
+    }
+    window.addEventListener("scroll", sweep, { passive: true });
+    window.addEventListener("load", sweep);
+    setTimeout(sweep, 400);
+
+    // 2. stat tiles count up from zero the moment they arrive
+    document.querySelectorAll(".tile-value[data-count]").forEach(function (elm) {
+      var target = Number(elm.getAttribute("data-count")) || 0;
+      var suffix = elm.getAttribute("data-suffix") || "";
+      inView(elm, function () {
+        animate(0, target, {
+          duration: 1.1, ease: easeOut,
+          onUpdate: function (v) { elm.textContent = fmt(Math.round(v)) + suffix; }
+        });
+      }, { amount: 0.6 });
+    });
+
+    // 3. monthly bars grow from the baseline, left to right
+    var bars = document.querySelectorAll(".bar");
+    if (bars.length) {
+      inView(bars[0].closest(".panel"), function () {
+        bars.forEach(function (bar, i) {
+          animate(bar, { transform: ["scaleY(0)", "scaleY(1)"] },
+            { delay: i * 0.04, duration: 0.5, ease: easeOut });
+        });
+      }, { amount: 0.3 });
+    }
+
+    // 4. language segments sweep out to their share
+    document.querySelectorAll(".lang-seg[data-w]").forEach(function (seg, i) {
+      var w = seg.getAttribute("data-w") + "%";
+      inView(seg.closest(".panel"), function () {
+        animate(seg, { width: ["0%", w] }, { delay: i * 0.06, duration: 0.7, ease: easeOut });
+      }, { amount: 0.4 });
+    });
+
+    // 5. hover lifts on tiles and skill chips
+    onHover(".tile",
+      function (elm) { animate(elm, { transform: "translateY(-4px)" }, { duration: 0.2, ease: easeOut }); },
+      function (elm) { animate(elm, { transform: "translateY(0px)" }, { duration: 0.25, ease: easeOut }); });
+    onHover(".chip",
+      function (elm) { animate(elm, { transform: "scale(1.06)" }, { duration: 0.15, ease: easeOut }); },
+      function (elm) { animate(elm, { transform: "scale(1)" }, { duration: 0.2, ease: easeOut }); });
+
+    // 6. press feedback on the month bars
+    onPress(".bar",
+      function (elm) { animate(elm, { transform: "scaleY(1) scale(0.95)" }, { duration: 0.1, ease: easeOut }); },
+      function (elm) { animate(elm, { transform: "scaleY(1) scale(1)" }, { duration: 0.18, ease: easeOut }); });
+  }
+
+  Promise.all([
+    fetch("data.json").then(function (r) {
+      if (!r.ok) throw new Error("bad status " + r.status);
+      return r.json();
+    }),
+    motionReady
+  ]).then(function (out) {
+    var data = out[0], motion = out[1];
+    if (motion) document.documentElement.classList.add("has-motion");
+    render(data);
+    if (motion) {
+      try {
+        applyMotion(motion);
+        animateSpace(motion, spaceRefs);
+      } catch (e) {
+        // never let a broken enhancement leave content stuck hidden
+        document.querySelectorAll(".section").forEach(function (s) {
+          s.style.opacity = 1;
+          s.style.transform = "none";
+        });
+      }
+    }
+  }).catch(function () {
+    renderError();
+  });
+})();
+</script>
+</body>
+</html>
